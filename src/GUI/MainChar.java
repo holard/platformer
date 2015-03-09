@@ -209,6 +209,11 @@ public class MainChar {
 		if (lrud[3]) {
 			stick = 0;
 		}
+		
+		if (stick != 0) {
+			if (dy > 0.1*TIMER)
+				dy = 0.1*TIMER;
+		}
 
 		if (!myMap.checkWall(x, y + SCALE)
 				&& dy < TIMER - Math.abs(stick * 0.9 * TIMER))
@@ -233,7 +238,8 @@ public class MainChar {
 			jumps = 2;
 			y = t.getPosition().second() - SCALE;
 		}
-
+		if (!myMap.checkWall(x+SCALE,y+SCALE/2) && !myMap.checkWall(x-1,y+SCALE/2))
+			stick = 0;
 		x += dx;
 		y += dy;
 
