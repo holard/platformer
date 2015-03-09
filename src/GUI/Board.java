@@ -15,12 +15,15 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
 public class Board extends JPanel implements ActionListener {
     private Timer timer;
     public static final int CAM_HB = 192;
     public static final int CAM_VB = 128;
+    public static final int TIMER = 15;
     private MainChar craft;
     private ArrayList<Tile> blocks;
+    private ArrayList<Projectile> projectiles;
     private boolean ingame;
     private int B_WIDTH;
     private int B_HEIGHT;
@@ -31,6 +34,7 @@ public class Board extends JPanel implements ActionListener {
     private int camh;
     public int mapwidth;
     public int mapheight;
+    
     public Board() {
         addKeyListener(new TAdapter());
         setFocusable(true);
@@ -38,6 +42,7 @@ public class Board extends JPanel implements ActionListener {
         setDoubleBuffered(true);
         ingame = true;
         setSize(400, 300);
+        
         camx = 0;
         camy = 0;
         camw = MainMethod.WIDTH;
@@ -45,6 +50,7 @@ public class Board extends JPanel implements ActionListener {
         initGame();
         mapwidth = 0;
         mapheight = 0;
+        
         for (Tile t : blocks) {
         	if (t.getPosition().first()+48 > mapwidth) {
         		mapwidth = t.getPosition().first()+32;
@@ -54,7 +60,7 @@ public class Board extends JPanel implements ActionListener {
         	}
         }
         craft = new MainChar(M,this);
-        timer = new Timer(MainChar.TIMER, this);
+        timer = new Timer(TIMER, this);
         timer.start();
     }
     
@@ -67,12 +73,14 @@ public class Board extends JPanel implements ActionListener {
     public void initGame() {
     	MapReader MR = new MapReader("src/GUI/map1.txt");
     	blocks = MR.makeMap();
+    	projectiles = new ArrayList<Projectile>();
         M = new Map(blocks);
     }
     
     public void paint(Graphics g) {
         super.paint(g);
-        if (ingame) {
+        if (ingame) 
+        {
         	if (craft.getX() < camx+CAM_HB) {
         		camx = Math.max(0, craft.getX() - CAM_HB);
         	}
@@ -90,50 +98,41 @@ public class Board extends JPanel implements ActionListener {
             if (craft.isVisible())
                 g2d.drawImage(craft.getImage(), craft.getX() - camx, craft.getY() - camy,
                               this);
-            ArrayList ms = craft.getMissiles();
-            for (int i = 0; i < ms.size(); i++) {
-                Missile m = (Missile)ms.get(i);
-                g2d.drawImage(m.getImage(), m.getX(), m.getY(), this);
-            }
+            
             for (int i = 0; i < blocks.size(); i++) {
                 Block a = (Block)blocks.get(i);
                 if (a.isVisible())
                     g2d.drawImage(a.getImage(), a.getX() - camx, a.getY()- camy, this);
             }
+            
+            for (int i = 0; i < projectiles.size(); i++) {
+            	Projectile p = (Projectile)projectiles.get(i);
+            	if (p.isVisible())
+            		g2d.drawImage(p.getImage(), p.getX() - camx, p.getY()- camy, this);
+            }
+            
             g2d.setColor(Color.WHITE);
-        } else {
-            String msg = "Game Over";
-            Font small = new Font("Helvetica", Font.BOLD, 14);
-            FontMetrics metr = this.getFontMetrics(small);
-            g.setColor(Color.white);
-            g.setFont(small);
-            g.drawString(msg, (B_WIDTH - metr.stringWidth(msg)) / 2,
-                         B_HEIGHT / 2);
+        } 
+        else 
+        {
+            //Do not ingame stuff
         }
+        
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
     }
     
-    public void actionPerformed(ActionEvent e) {
-        ArrayList ms = craft.getMissiles();
-        for (int i = 0; i < ms.size(); i++) {
-            Missile m = (Missile) ms.get(i);
-            if (m.isVisible()) 
-                m.move();
-            else ms.remove(i);
-        }
-        for (int i = 0; i < blocks.size(); i++) {
-            Block a = (Block) blocks.get(i);
-            if (a.isVisible()) 
-                a.move();
-            else blocks.remove(i);
-        }
+    public void actionPerformed(ActionEvent e) {    	
         craft.move();
-        checkCollisions();
+        for (int i = 0; i < projectiles.size(); i++) {
+        	Projectile p = projectiles.get(i);
+        	p.move();
+        }
         repaint();  
     }
     
-    public void checkCollisions() {
+    public ArrayList<Projectile> getProjectiles() {
+    	return projectiles;
     }
     
     private class TAdapter extends KeyAdapter {

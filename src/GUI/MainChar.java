@@ -11,7 +11,6 @@ import javax.swing.ImageIcon;
 
 public class MainChar {
 
-	private String craft = "craft.png";
 	public static final int SCALE = 32;
 	public static final int TIMER = 15;
 	private double dx;
@@ -22,12 +21,9 @@ public class MainChar {
 	private int height;
 	private boolean visible;
 	private Image image;
-	private Image image2;
-	private ArrayList missiles;
 	private Map myMap;
 	private int jumps = 0;
-	private int wallj = 0;
-	int dir = 1;
+	int dir = 1; //-1 is facing left, 1 is facing right
 	private boolean[] lrud = { false, false, false, false };
 	private boolean[] lrud2 = { false, false, false, false };
 	Board myBoard;
@@ -42,7 +38,6 @@ public class MainChar {
 		//image[1] = ii.getImage();
 		width = image.getWidth(null);
 		height = image.getHeight(null);
-		missiles = new ArrayList();
 		myMap = b;
 		visible = true;
 		x = 40;
@@ -278,10 +273,6 @@ public class MainChar {
 		
 	}
 
-	public ArrayList getMissiles() {
-		return missiles;
-	}
-
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
@@ -316,14 +307,30 @@ public class MainChar {
 			lrud[1] = true;
 			lrud2[1] = true;
 		}
+		
 		if (key == KeyEvent.VK_DOWN) {
 			lrud[3] = true;
 			lrud2[3] = true;
 		}
+		
+		if (key == KeyEvent.VK_F) {
+			fireBasic();
+		}
 	}
 
-	public void fire() {
-		// missiles.add(new Missile(x + width, y + height/2));
+	public void fireBasic() {
+		int bullet_dx = 10 * dir;
+		int bullet_dy = 0;
+		int bullet_x, bullet_y;
+		if (dir == 1) {
+			bullet_x = x + width;
+			bullet_y = y + height/2;			
+		}
+		else {
+			bullet_x = x - 24; //24 hardcoded bullet width
+			bullet_y = y + height/2;
+		}
+		myBoard.getProjectiles().add(new BasicBullet(bullet_x,bullet_y,bullet_dx,bullet_dy));
 	}
 
 	public void keyReleased(KeyEvent e) {
