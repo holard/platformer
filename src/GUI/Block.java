@@ -67,4 +67,10 @@ public class Block implements Tile{
 	public boolean isWall() {
 		return true;
 	}
+
+
+	@Override
+	public boolean canStick() {
+		return true;
+	}
 }

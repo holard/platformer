@@ -100,6 +100,12 @@ public class MainChar {
 				}
 			}
 		}
+		if (dx > .3 * TIMER) {
+			dx -= 0.01*TIMER;
+		}
+		if (dx < -.3 * TIMER) {
+			dx += 0.01*TIMER;
+		}
 	}
 
 	public void handleCeilingCollision(boolean[] points, Tile[] tiles) {
@@ -132,7 +138,7 @@ public class MainChar {
 	public void handleLateralCollision(boolean[] points, Tile[] tiles) {
 		if (points[3]) { // LEFT SIDE
 			x = tiles[3].getPosition().first() + SCALE;
-			if (!myMap.checkWall(x, y + 64) && dx < -.15 * TIMER) {
+			if (!myMap.checkWall(x, y + 64) && dx < -.15 * TIMER && tiles[3].canStick()) {
 				stick = -1;
 				sticktime = 150;
 			}
@@ -153,7 +159,7 @@ public class MainChar {
 		}
 		if (points[4]) { // RIGHT SIDE
 			x = tiles[4].getPosition().first() - SCALE;
-			if (!myMap.checkWall(x+SCALE-1, y + 64) && dx > .15 * TIMER) {
+			if (!myMap.checkWall(x+SCALE-1, y + 64) && dx > .15 * TIMER && tiles[4].canStick()) {
 				stick = 1;
 				sticktime = 150;
 			}
@@ -197,10 +203,10 @@ public class MainChar {
 				}
 			}
 			if (jumps == 2) { // standard jump
-				dy = -TIMER;
+				dy = -TIMER* 0.85;
 				jumps -= 1;
 			} else if (jumps == 1) {
-				dy = -TIMER * 0.75;
+				dy = -TIMER * 0.85;
 				jumps -= 1;
 			}
 			lrud[2] = false;
