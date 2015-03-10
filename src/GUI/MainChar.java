@@ -39,6 +39,9 @@ public class MainChar extends Element {
 		jumps = 0;
 		myBoard = myb;
 	}
+	public void setMap(Map nu) {
+		myMap = nu;
+	}
 
 	public void handleLR() {
 		// deceleration

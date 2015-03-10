@@ -12,7 +12,7 @@ WWWW                 WWWW                   W   W
 WWWWWW              WWWWWW                  W   W
 WWWWWWW           WWWWWWWWW                 W   W
 WWWWWWWW         WWWWWWWWWWW                W   WWW
-WWWWWWWWWW      WWWWWWWWWWWWW               W    
-WWWWWWWWWW      WWWWWWWWWWWWWWWWWWWWWWWW    W    
-WWWWWWWWWW      WWWWWWWWWWWWWWWWWWWWWWWW    W    
+                WWWWWWWWWWWWW               W     W
+                WWWWWWWWWWWWWWWWWWWWWWWW    W     W
+                WWWWWWWWWWWWWWWWWWWWWWWW    W     W
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW

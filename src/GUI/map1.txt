@@ -1,7 +1,6 @@
-49,18
-W                                      W    W   W
-W                                W     W    W   W
-W                                W     W    W   W
+W                                      WWWWWWWWWW
+W                                W     W        W
+W                                W     W        W
 W                                W     W    W   W
 W        WWWWWWWWWWWWWWWWWWWWWWWWW     W    W   W
 W        WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW    W   W
@@ -12,8 +11,8 @@ WW       WWWWWWW      WW     WWWWWWWWWWW    W   W
 WWWW                 WWWW                   W   W
 WWWWWW              WWWWWW                  W   W
 WWWWWWW           WWWWWWWWW                 W   W
-WWWWWWWW         WWWWWWWWWWW                W   W
-WWWWWWWWWW      WWWWWWWWWWWWW               W   W
-WWWWWWWWWW      WWWWWWWWWWWWWWWWWWWWWWWW    W   W
-WWWWWWWWWW      WWWWWWWWWWWWWWWWWWWWWWWW    W   W
-WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWW         WWWWWWWWWWW                W   WWW
+WWWWWWWWWW      WWWWWWWWWWWWW               W    
+WWWWWWWWWW      WWWWWWWWWWWWWWWWWWWWWWWW    W    
+WWWWWWWWWW      WWWWWWWWWWWWWWWWWWWWWWWW    W    
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
