@@ -108,6 +108,10 @@ public class Board extends JPanel implements ActionListener {
             
             for (int i = 0; i < projectiles.size(); i++) {
             	Projectile p = (Projectile)projectiles.get(i);
+            	if (p.getX()<-64 || p.getX() > mapwidth+64 || p.getY() < -64 || p.getY() > mapheight+64) {
+            		projectiles.remove(p);
+            		i-=1;
+            	}
             	if (p.isVisible())
             		g2d.drawImage(p.getImage(), p.getX() - camx, p.getY()- camy, this);
             }
