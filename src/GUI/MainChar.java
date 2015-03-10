@@ -95,8 +95,13 @@ public class MainChar {
 				}
 			}
 		}
+		if (dx > .3 * TIMER) {
+			dx -= 0.01*TIMER;
+		}
+		if (dx < -.3 * TIMER) {
+			dx += 0.01*TIMER;
+		}
 	}
-
 	public void handleCeilingCollision(boolean[] points, Tile[] tiles) {
 		if (points[1]) { // hitting your head on the ceiling
 			dy = 0;
@@ -123,11 +128,10 @@ public class MainChar {
 			}
 		}
 	}
-
 	public void handleLateralCollision(boolean[] points, Tile[] tiles) {
 		if (points[3]) { // LEFT SIDE
 			x = tiles[3].getPosition().first() + SCALE;
-			if (!myMap.checkWall(x, y + 64) && dx < -.15 * TIMER) {
+			if (!myMap.checkWall(x, y + 64) && dx < -.15 * TIMER && tiles[3].canStick()) {
 				stick = -1;
 				sticktime = 150;
 			}
@@ -139,7 +143,7 @@ public class MainChar {
 							- t.getPosition().first()) {
 				dy = 0;
 				y = t.getPosition().second() - SCALE;
-				jumps = 2;
+				jumps = 1;
 				stick = 0;
 			} else {
 				dx = 0;
@@ -148,7 +152,7 @@ public class MainChar {
 		}
 		if (points[4]) { // RIGHT SIDE
 			x = tiles[4].getPosition().first() - SCALE;
-			if (!myMap.checkWall(x+SCALE-1, y + 64) && dx > .15 * TIMER) {
+			if (!myMap.checkWall(x+SCALE-1, y + 64) && dx > .15 * TIMER && tiles[4].canStick()) {
 				stick = 1;
 				sticktime = 150;
 			}
@@ -160,7 +164,7 @@ public class MainChar {
 							.first() - (x + dx)) {
 				dy = 0;
 				y = t.getPosition().second() - SCALE;
-				jumps = 2;
+				jumps = 1;
 				stick = 0;
 			} else {
 				dx = 0;
@@ -168,13 +172,10 @@ public class MainChar {
 			}
 		}
 	}
-
 	public void move() {
 		handleLR();
-
 		boolean[] points = new boolean[8];
 		Tile[] tiles = new Tile[8];
-
 		if (lrud[2]) { // pressing the UP arrow
 			if (stick == -1) {
 				if (lrud[1]) {
@@ -191,16 +192,15 @@ public class MainChar {
 					dx = -0.5 * TIMER;
 				}
 			}
-			if (jumps == 2) { // standard jump
-				dy = -TIMER;
-				jumps -= 1;
-			} else if (jumps == 1) {
-				dy = -TIMER * 0.75;
+			else if (myMap.checkWall(x, y+32) || myMap.checkWall(x+SCALE-1,y+32)) {
+				dy = -TIMER * 0.85;
+			}
+			else if (jumps == 1) {
+				dy = -TIMER * 0.85;
 				jumps -= 1;
 			}
 			lrud[2] = false;
 		}
-
 		if (lrud[3]) {
 			stick = 0;
 		}
@@ -209,11 +209,9 @@ public class MainChar {
 			if (dy > 0.1*TIMER)
 				dy = 0.1*TIMER;
 		}
-
 		if (!myMap.checkWall(x, y + SCALE)
 				&& dy < TIMER - Math.abs(stick * 0.9 * TIMER))
 			dy += TIMER * 0.05;
-
 		epquery(points, tiles, (int) (x + dx), (int) (y + dy), SCALE);
 		// 0: topl, 1: top, 2: topr, 3: l, 4: r, 5: bl, 6: b, 7: br
 		if (dx != 0) {
@@ -225,31 +223,26 @@ public class MainChar {
 		
 		handleLateralCollision(points, tiles);
 		handleCeilingCollision(points, tiles);
-
 		if (points[6]) {
 			Tile t = tiles[6];
 			dy = 0;
 			stick = 0;
-			jumps = 2;
+			jumps = 1;
 			y = t.getPosition().second() - SCALE;
 		}
 		if (!myMap.checkWall(x+SCALE,y+SCALE/2) && !myMap.checkWall(x-1,y+SCALE/2))
 			stick = 0;
 		x += dx;
 		y += dy;
-
 		if (x < 1) {
 			x = 1;
 		}
-
 		if (x > myBoard.mapwidth) {
 			x = myBoard.mapwidth;
 		}
-
 		if (y > myBoard.mapheight) {
 			y = myBoard.mapheight;
 		}
-
 	}
 
 	public int getX() {
