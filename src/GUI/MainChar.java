@@ -3,42 +3,31 @@
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import javax.swing.ImageIcon;
 
-public class MainChar {
+public class MainChar extends Element {
 
 	public static final int SCALE = 32;
 	public static final int TIMER = 15;
 	private double dx;
 	private double dy;
-	private int x;
-	private int y;
-	private int width;
-	private int height;
-	private boolean visible;
-	private Image image;
-	private Map myMap;
 	private int jumps = 0;
 	int dir = 1; //-1 is facing left, 1 is facing right
 	private boolean[] lrud = { false, false, false, false };
 	private boolean[] lrud2 = { false, false, false, false };
-	Board myBoard;
+	private boolean iChange = false; //image change needed
 	private int stick = 0;
 	private int sticktime = 0;
 
 	public MainChar(Map b, Board myb) {
-		ImageIcon 
-		ii = new ImageIcon(this.getClass().getResource("craft.png"));
+		ImageIcon ii = new ImageIcon(this.getClass().getResource("craft.png"));
 		image = ii.getImage();
-		//ii = new ImageIcon(this.getClass().getResource("craft2.png"));
-		//image[1] = ii.getImage();
 		width = image.getWidth(null);
 		height = image.getHeight(null);
 		myMap = b;
+		if (myMap == null)
+			System.out.println("myMap is null!");
 		visible = true;
 		x = 40;
 		y = 60;
@@ -46,28 +35,9 @@ public class MainChar {
 		myBoard = myb;
 	}
 
-	public void epquery(boolean[] points, Tile[] tiles, int x, int y, int scale) {
-		// 0: topl, 1: top, 2: topr, 3: l, 4: r, 5: bl, 6: b, 7: br
-		points[0] = myMap.checkWall(x, y);
-		points[1] = myMap.checkWall(x + scale / 2, y);
-		points[2] = myMap.checkWall(x + scale, y);
-		points[3] = myMap.checkWall(x, y + scale / 2);
-		points[4] = myMap.checkWall(x + scale, y + scale / 2);
-		points[5] = myMap.checkWall(x, y + scale);
-		points[6] = myMap.checkWall(x + scale / 2, y + scale);
-		points[7] = myMap.checkWall(x + scale, y + scale);
-		tiles[0] = myMap.getWallAt(x, y);
-		tiles[1] = myMap.getWallAt(x + scale / 2, y);
-		tiles[2] = myMap.getWallAt(x + scale, y);
-		tiles[3] = myMap.getWallAt(x, y + scale / 2);
-		tiles[4] = myMap.getWallAt(x + scale, y + scale / 2);
-		tiles[5] = myMap.getWallAt(x, y + scale);
-		tiles[6] = myMap.getWallAt(x + scale / 2, y + scale);
-		tiles[7] = myMap.getWallAt(x + scale, y + scale);
-	}
-
 	public void handleLR() {
-		if ((!lrud[0] && !lrud[1]) || (lrud[0] && lrud[1])) { // deceleration
+		// deceleration
+		if ((!lrud[0] && !lrud[1]) || (lrud[0] && lrud[1])) { 
 			if (dx > 1) {
 				dx -= 1;
 			} else if (dx < -1) {
@@ -75,7 +45,9 @@ public class MainChar {
 			} else
 				dx = 0;
 		}
-		if (lrud[0] && !lrud[1]) { // move left
+		
+		// move left
+		if (lrud[0] && !lrud[1]) { 
 			if (stick != 1 && dx > -.3 * TIMER)
 				dx -= 1;
 			if (stick == 1) {
@@ -85,7 +57,9 @@ public class MainChar {
 				}
 			}
 		}
-		if (lrud[1] && !lrud[0]) { // move right
+		
+		// move right
+		if (lrud[1] && !lrud[0]) { 
 			if (stick != -1 && dx < .3 * TIMER)
 				dx += 1;
 			if (stick == -1) {
@@ -95,6 +69,8 @@ public class MainChar {
 				}
 			}
 		}
+		
+		//decay to max speed
 		if (dx > .3 * TIMER) {
 			dx -= 0.01*TIMER;
 		}
@@ -102,8 +78,10 @@ public class MainChar {
 			dx += 0.01*TIMER;
 		}
 	}
+	
 	public void handleCeilingCollision(boolean[] points, Tile[] tiles) {
-		if (points[1]) { // hitting your head on the ceiling
+		// hitting your head on the ceiling
+		if (points[1]) { 
 			dy = 0;
 			y = tiles[1].getPosition().second() + SCALE;
 		} else if (points[0]) {
@@ -116,7 +94,9 @@ public class MainChar {
 				dx = 0;
 				x = t.getPosition().first() + SCALE;
 			}
-		} else if (points[2]) {
+		} 
+		else if (points[2]) 
+		{
 			Tile t = tiles[2];
 			if ((y + dy) - t.getPosition().second() > t.getPosition().first()
 					- (x + dx)) {
@@ -128,6 +108,7 @@ public class MainChar {
 			}
 		}
 	}
+	
 	public void handleLateralCollision(boolean[] points, Tile[] tiles) {
 		if (points[3]) { // LEFT SIDE
 			x = tiles[3].getPosition().first() + SCALE;
@@ -172,10 +153,12 @@ public class MainChar {
 			}
 		}
 	}
+	
 	public void move() {
 		handleLR();
 		boolean[] points = new boolean[8];
 		Tile[] tiles = new Tile[8];
+		
 		if (lrud[2]) { // pressing the UP arrow
 			if (stick == -1) {
 				if (lrud[1]) {
@@ -245,39 +228,6 @@ public class MainChar {
 		}
 	}
 
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public Image getImage() {
-		String s = "craft";
-		if (dir == -1) {
-			s += "2";
-		}
-		s += ".png";
-		ImageIcon ii = new ImageIcon(this.getClass().getResource(s));
-		image = ii.getImage();
-		
-		return image;
-		
-	}
-
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-	}
-
-	public boolean isVisible() {
-		return visible;
-	}
-
-	public Rectangle getBounds() {
-		return new Rectangle(x, y, width, height);
-	}
-
 	public void keyPressed(KeyEvent e) {
 
 		int key = e.getKeyCode();
@@ -294,11 +244,13 @@ public class MainChar {
 		if (key == KeyEvent.VK_LEFT) {
 			lrud[0] = true;
 			lrud2[0] = true;
+			setImage("craft2.png");
 		}
 
 		if (key == KeyEvent.VK_RIGHT) {
 			lrud[1] = true;
 			lrud2[1] = true;
+			setImage("craft.png");
 		}
 		
 		if (key == KeyEvent.VK_DOWN) {
@@ -332,11 +284,15 @@ public class MainChar {
 		if (key == KeyEvent.VK_LEFT) {
 			lrud[0] = false;
 			lrud2[0] = false;
+			if (lrud[1])
+				setImage("craft.png");
 		}
 
 		if (key == KeyEvent.VK_RIGHT) {
 			lrud[1] = false;
 			lrud2[1] = false;
+			if (lrud[0])
+				setImage("craft2.png");
 		}
 
 		if (key == KeyEvent.VK_UP) {

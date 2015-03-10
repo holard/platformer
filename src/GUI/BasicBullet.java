@@ -16,4 +16,8 @@ public class BasicBullet extends Projectile {
 		this.dy = dy;
 	}
 	
+	public void move() {
+		super.move();
+		
+	}
 }

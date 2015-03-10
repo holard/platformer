@@ -36,25 +36,13 @@ public class Map {
 			return null;
 		return t;
 	}
+	
 	public Tile getTileAt(int x, int y) {
 		Pair<Integer, Integer> pos = new Pair<Integer,Integer>(x, y);
 		Tile t = grid.get(snap(pos));
-		//Tile t2 = grid.get(snap(new Pair<Integer,Integer>(x-16,y)));
-		//Tile t3 = grid.get(snap(new Pair<Integer,Integer>(x,y-16)));
-		//Tile t4 = grid.get(snap(new Pair<Integer,Integer>(x-16,y-16)));
 		if (t != null) {
 			return t;
 		}
-		/*
-		if (t2 != null) {
-			return t2;
-		}
-		if (t3 != null) {
-			return t3;
-		}
-		if (t4 != null) {
-			return t4;
-		}*/
 		return t;
 	}
 	

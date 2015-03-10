@@ -59,7 +59,7 @@ public class Board extends JPanel implements ActionListener {
         		mapheight = t.getPosition().second()+60;
         	}
         }
-        craft = new MainChar(M,this);
+        craft = new MainChar(M, this);
         timer = new Timer(TIMER, this);
         timer.start();
     }
@@ -74,6 +74,7 @@ public class Board extends JPanel implements ActionListener {
     	MapReader MR = new MapReader("src/GUI/map1.txt");
     	blocks = MR.makeMap();
     	projectiles = new ArrayList<Projectile>();
+    	System.out.println("initGame Board");
         M = new Map(blocks);
     }
     
