@@ -25,6 +25,7 @@ public class MainChar extends Element {
 	private int doubletimer = 0;
 	private int keycount = 0;
 	private Tile hang;
+	private boolean hung = false;
 
 	public MainChar(Map b, Board myb) {
 		ImageIcon ii = new ImageIcon(this.getClass().getResource("craft.png"));
@@ -127,8 +128,10 @@ public class MainChar extends Element {
 		if (points[3]) { // LEFT SIDE
 			x = tiles[3].getPosition().first() + SCALE;
 			if (!myMap.checkWall(x - 1, y - 1)
-					&& !myMap.checkWall(x, y + height + SCALE) && dx < 0) {
+					&& !myMap.checkWall(x, y + height + SCALE) && dx < 0
+					&& dy > 0) {
 				hang = tiles[3];
+				hung = false;
 				jumps = 0;
 			} else if (!myMap.checkWall(x, y + height + SCALE)
 					&& dx < -.15 * TIMER && tiles[3].canStick() && hang == null) {
@@ -137,8 +140,9 @@ public class MainChar extends Element {
 			}
 			dx = 0;
 		} else if (points[5]) {
-			if (!myMap.checkWall(x, y + height + SCALE) && dx < -.15 * TIMER) {
+			if (!myMap.checkWall(x, y + height) && dx < -.15 * TIMER) {
 				hang = tiles[5];
+				hung = false;
 				jumps = 0;
 			}
 			Tile t = tiles[5];
@@ -147,7 +151,8 @@ public class MainChar extends Element {
 							- t.getPosition().first()) {
 				dy = 0;
 				y = t.getPosition().second() - height;
-				jumps = 1;
+				if (hang == null)
+					jumps = 1;
 				stick = 0;
 			} else {
 				dx = 0;
@@ -156,9 +161,9 @@ public class MainChar extends Element {
 		}
 		if (points[4]) { // RIGHT SIDE
 			x = tiles[4].getPosition().first() - width;
-			if (!myMap.checkWall(x + width + 1, y - 1)
+			if (!myMap.checkWall(x + width, y - 1)
 					&& !myMap.checkWall(x + width - 1, y + height + SCALE)
-					&& dx > 0) {
+					&& dx > 0 && dy > 0) {
 				hang = tiles[4];
 			} else if (!myMap.checkWall(x + width - 1, y + height + SCALE)
 					&& dx > .15 * TIMER && tiles[4].canStick()) {
@@ -173,7 +178,8 @@ public class MainChar extends Element {
 							.first() - (x + dx)) {
 				dy = 0;
 				y = t.getPosition().second() - height;
-				jumps = 1;
+				if (hang == null)
+					jumps = 1;
 				stick = 0;
 			} else {
 				dx = 0;
@@ -195,28 +201,30 @@ public class MainChar extends Element {
 		if (lrud[2]) { // pressing the UP arrow
 			if (hang != null) {
 				hang = null;
+				hung = false;
 				dy = -7;
-			}
-			if (stick == -1) {
-				if (lrud[1]) {
-					stick = 0;
-					jumps = 0;
-					dy = -TIMER * 0.75;
-					dx = 0.6 * TIMER;
+			} else {
+				if (stick == -1) {
+					if (lrud[1]) {
+						stick = 0;
+						jumps = 0;
+						dy = -TIMER * 0.75;
+						dx = 0.6 * TIMER;
+					}
+				} else if (stick == 1) {
+					if (lrud[0]) {
+						stick = 0;
+						jumps = 0;
+						dy = -TIMER * 0.75;
+						dx = -0.6 * TIMER;
+					}
+				} else if (myMap.checkWall(x, y + height)
+						|| myMap.checkWall(x + width - 1, y + height)) {
+					dy = -TIMER * 0.85;
+				} else if (jumps == 1) {
+					dy = -TIMER * 0.85;
+					jumps -= 1;
 				}
-			} else if (stick == 1) {
-				if (lrud[0]) {
-					stick = 0;
-					jumps = 0;
-					dy = -TIMER * 0.75;
-					dx = -0.6 * TIMER;
-				}
-			} else if (myMap.checkWall(x, y + height)
-					|| myMap.checkWall(x + width - 1, y + height)) {
-				dy = -TIMER * 0.85;
-			} else if (jumps == 1) {
-				dy = -TIMER * 0.85;
-				jumps -= 1;
 			}
 			lrud[2] = false;
 		}
@@ -249,15 +257,18 @@ public class MainChar extends Element {
 			Tile t = tiles[6];
 			dy = 0;
 			stick = 0;
-			jumps = 1;
+			if (hang == null)
+				jumps = 1;
 			y = t.getPosition().second() - height;
 		}
 		if (!myMap.checkWall(x + width, y + height / 2)
 				&& !myMap.checkWall(x - 1, y + height / 2))
 			stick = 0;
 
-		if (hang != null && y > hang.getPosition().second()) {
+		if (hang != null && y >= hang.getPosition().second()) {
 			y = hang.getPosition().second();
+			if (dy >= 0)
+				hung = true;
 			dy = 0;
 		}
 
