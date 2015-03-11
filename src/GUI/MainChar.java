@@ -128,8 +128,8 @@ public class MainChar extends Element {
 		if (points[3]) { // LEFT SIDE
 			x = tiles[3].getPosition().first() + SCALE;
 			if (!myMap.checkWall(x - 1, y - 1)
-					&& !myMap.checkWall(x, y + height + SCALE) && dx < 0
-					&& dy > 0) {
+					&& !myMap.checkWall(x, tiles[3].getPosition().second()
+							+ SCALE) && dx < 0 && dy > 0) {
 				hang = tiles[3];
 				hung = false;
 				jumps = 0;
@@ -140,7 +140,9 @@ public class MainChar extends Element {
 			}
 			dx = 0;
 		} else if (points[5]) {
-			if (!myMap.checkWall(x, y + height) && dx < -.15 * TIMER) {
+			if (!myMap.checkWall(x, tiles[5].getPosition().second())
+					&& !myMap.checkWall(x, tiles[5].getPosition().second()
+							+ SCALE) && dx < -.15 * TIMER) {
 				hang = tiles[5];
 				hung = false;
 				jumps = 0;
@@ -162,8 +164,8 @@ public class MainChar extends Element {
 		if (points[4]) { // RIGHT SIDE
 			x = tiles[4].getPosition().first() - width;
 			if (!myMap.checkWall(x + width, y - 1)
-					&& !myMap.checkWall(x + width - 1, y + height + SCALE)
-					&& dx > 0 && dy > 0) {
+					&& !myMap.checkWall(x + width - 1, tiles[4].getPosition()
+							.second() + SCALE) && dx > 0 && dy > 0) {
 				hang = tiles[4];
 			} else if (!myMap.checkWall(x + width - 1, y + height + SCALE)
 					&& dx > .15 * TIMER && tiles[4].canStick()) {
@@ -172,6 +174,13 @@ public class MainChar extends Element {
 			}
 			dx = 0;
 		} else if (points[7]) {
+			if (!myMap.checkWall(x + width - 1, tiles[7].getPosition().second())
+					&& !myMap.checkWall(x + width - 1, tiles[7].getPosition()
+							.second() + SCALE) && dx > .15 * TIMER) {
+				hang = tiles[7];
+				hung = false;
+				jumps = 0;
+			}
 			Tile t = tiles[7];
 			if (dy >= 0
 					&& t.getPosition().second() - (y + dy) > t.getPosition()
