@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 
 public class MainChar extends Element {
-
+	
 	public static final int SCALE = 32;
 	public static final int TIMER = 15;
 	public static final int MAX_ENERGY = 100;
@@ -207,7 +207,7 @@ public class MainChar extends Element {
 		if (!myMap.checkWall(x, y + SCALE)
 				&& dy < TIMER - Math.abs(stick * 0.9 * TIMER))
 			dy += TIMER * 0.05;
-		epquery(points, tiles, (int) (x + dx), (int) (y + dy), SCALE);
+		epquery(points, tiles, (int) (x + dx), (int) (y + dy), width, height);
 		// 0: topl, 1: top, 2: topr, 3: l, 4: r, 5: bl, 6: b, 7: br
 		if (dx != 0) {
 			dir = (int) (dx / (Math.abs(dx)));
@@ -301,15 +301,22 @@ public class MainChar extends Element {
 		int bullet_dx = 10 * dir;
 		int bullet_dy = 0;
 		int bullet_x, bullet_y;
+		
+		BasicBullet bullet = new BasicBullet(0,0, bullet_dx, bullet_dy, myMap, myBoard);
+		int b_width = bullet.getWidth();
+		int b_height = bullet.getHeight();
 		if (dir == 1) {
 			bullet_x = x + width;
-			bullet_y = y + height / 2;
-		} else {
-			bullet_x = x - 24; // 24 hardcoded bullet width
-			bullet_y = y + height / 2;
+			bullet_y = y + height / 2 - b_height / 2;
+		} 
+		else 
+		{
+			bullet_x = x - b_width; 
+			bullet_y = y + height / 2 - b_height / 2;
 		}
+		
 		myBoard.getProjectiles().add(
-				new BasicBullet(bullet_x, bullet_y, bullet_dx, bullet_dy));
+				new BasicBullet(bullet_x, bullet_y, bullet_dx, bullet_dy, myMap, myBoard));
 	}
 
 	public void keyReleased(KeyEvent e) {

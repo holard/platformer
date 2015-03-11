@@ -1,5 +1,6 @@
 package GUI;
 
+
 public abstract class Projectile extends Element{	
 	public int dx,dy;
 	public boolean friendly; //friendly if projectile of mainchar
