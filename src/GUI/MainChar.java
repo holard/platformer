@@ -127,7 +127,7 @@ public class MainChar extends Element {
 		if (points[3]) { // LEFT SIDE
 			x = tiles[3].getPosition().first() + SCALE;
 			if (!myMap.checkWall(x - 1, y - 1)
-					&& !myMap.checkWall(x, y + height + SCALE)) {
+					&& !myMap.checkWall(x, y + height + SCALE) && dx < 0) {
 				hang = tiles[3];
 				jumps = 0;
 			} else if (!myMap.checkWall(x, y + height + SCALE)
@@ -157,7 +157,8 @@ public class MainChar extends Element {
 		if (points[4]) { // RIGHT SIDE
 			x = tiles[4].getPosition().first() - width;
 			if (!myMap.checkWall(x + width + 1, y - 1)
-					&& !myMap.checkWall(x + width - 1, y + height + SCALE)) {
+					&& !myMap.checkWall(x + width - 1, y + height + SCALE)
+					&& dx > 0) {
 				hang = tiles[4];
 			} else if (!myMap.checkWall(x + width - 1, y + height + SCALE)
 					&& dx > .15 * TIMER && tiles[4].canStick()) {
@@ -315,6 +316,7 @@ public class MainChar extends Element {
 		if (key == KeyEvent.VK_DOWN) {
 			lrud[3] = true;
 			lrud2[3] = true;
+			hang = null;
 			lastkey = key;
 		}
 
