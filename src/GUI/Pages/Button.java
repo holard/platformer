@@ -1,4 +1,4 @@
-package GUI;
+package GUI.Pages;
 
 public class Button {
 	private int x;

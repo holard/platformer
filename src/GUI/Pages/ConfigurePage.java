@@ -1,4 +1,4 @@
-package GUI;
+package GUI.Pages;
 
 import java.util.ArrayList;
 

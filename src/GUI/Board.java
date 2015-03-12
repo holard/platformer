@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import GUI.Pages.Button;
+import GUI.Pages.ConfigurePage;
+import GUI.Pages.MenuPage;
+import GUI.Pages.Page;
 import Objects.MainChar;
 import Objects.Projectiles.Projectile;
 import Objects.Tiles.Block;
