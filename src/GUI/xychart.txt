@@ -1,0 +1,2 @@
+0 0 1632 576 src/GUI/map1.txt
+1632 0 1632 576 src/GUI/map2.txt

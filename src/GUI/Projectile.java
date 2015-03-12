@@ -8,6 +8,10 @@ public abstract class Projectile extends Element{
     public void move() {
     	x += dx;
     	y += dy;
+    	
+    	if (outOfBounds()) {
+    		myBoard.getProjectiles().remove(this);
+    	}
     }
     
 }

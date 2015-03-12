@@ -6,10 +6,10 @@ import java.awt.Rectangle;
 import javax.swing.ImageIcon;
 
 public abstract class Element {
-	public int x,y;
-	public Image image;
-	boolean visible;
-	public int width, height;
+	protected int x,y;
+	protected Image image;
+	protected boolean visible;
+	protected int width, height;
 	public Map myMap;
 	public Board myBoard;
 	
@@ -31,6 +31,13 @@ public abstract class Element {
 		tiles[5] = myMap.getWallAt(x, y + height);
 		tiles[6] = myMap.getWallAt(x + width / 2, y + height);
 		tiles[7] = myMap.getWallAt(x + width, y + height);
+	}
+	
+	public boolean outOfBounds() {
+		return ((x + width/2 > myMap.getWidth()) ||
+				(y + height/2 > myMap.getHeight()) ||
+				(x + width/2 < 0) ||
+				(y + height/2 < 0));
 	}
 	
 	public Image getImage() {

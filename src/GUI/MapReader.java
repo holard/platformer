@@ -26,31 +26,18 @@ public class MapReader {
 		try {
 			BR = new BufferedReader(new FileReader(mapFile));
 			String line1 = BR.readLine();
-			if (line1.contains(",")) {
-				String[] dimensions = line1.split(",");
-				int width = Integer.parseInt(dimensions[0]);
-				int height = Integer.parseInt(dimensions[1]);
-				for (int i = 0; i < height; i++) {
-					String line = BR.readLine();
-					// System.out.println(line);
-					for (int j = 0; j < width; j++) {
-						char c = line.charAt(j);
-						if (c == 'W')
-							tiles.add(new Block(32 * j, 32 * i));
-					}
+			
+			int i = 0;
+			while (line1 != null) {
+				for (int j = 0; j < line1.length(); j++) {
+					char c = line1.charAt(j);
+					if (c == 'W')
+						tiles.add(new Block(32 * j, 32 * i));
 				}
-			} else {
-				int i = 0;
-				while (line1 != null) {
-					for (int j = 0; j < line1.length(); j++) {
-						char c = line1.charAt(j);
-						if (c == 'W')
-							tiles.add(new Block(32*j,32*i));
-					}
-					line1 = BR.readLine();
-					i += 1;
-				}
+				line1 = BR.readLine();
+				i += 1;				
 			}
+
 			BR.close();
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -27,14 +27,11 @@ public class MainChar extends Element {
 	private Tile hang;
 	private boolean hung = false;
 
-	public MainChar(Map b, Board myb) {
+	public MainChar(Board myb) {
 		ImageIcon ii = new ImageIcon(this.getClass().getResource("craft.png"));
 		image = ii.getImage();
 		width = image.getWidth(null);
 		height = image.getHeight(null);
-		myMap = b;
-		if (myMap == null)
-			System.out.println("myMap is null!");
 		visible = true;
 		x = 40;
 		y = 60;
@@ -283,14 +280,9 @@ public class MainChar extends Element {
 
 		x += dx;
 		y += dy;
-		if (x < 1) {
-			x = 1;
-		}
-		if (x > myBoard.mapwidth) {
-			x = myBoard.mapwidth;
-		}
-		if (y > myBoard.mapheight) {
-			y = myBoard.mapheight;
+		
+		if (outOfBounds()) {
+			myBoard.changeMap(0);
 		}
 	}
 

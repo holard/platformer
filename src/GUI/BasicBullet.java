@@ -32,7 +32,7 @@ public class BasicBullet extends Projectile {
 		}
 		if (collided)
 			myBoard.getProjectiles().remove(this);
-		
-		super.move();
+		else
+			super.move();
 	}
 }
