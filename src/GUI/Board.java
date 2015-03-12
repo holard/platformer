@@ -217,9 +217,9 @@ public class Board extends JPanel implements ActionListener {
 				g2d.drawString("PAUSED [" + KeyEvent.getKeyText(P) + "]", 128,
 						200);
 				g2d.setFont(new Font("SERIF", 0, 50));
-				g2d.drawString("[" + KeyEvent.getKeyText(F) + "] for menu",
+				g2d.drawString("[" + KeyEvent.getKeyText(F) + "] for restart",
 						128, 320);
-				g2d.drawString("[" + KeyEvent.getKeyText(G) + "] to restart",
+				g2d.drawString("[" + KeyEvent.getKeyText(G) + "] to menu",
 						128, 380);
 
 			}

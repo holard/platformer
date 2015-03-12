@@ -42,7 +42,7 @@ public class MainChar extends Element {
 	public void setMap(Map nu) {
 		myMap = nu;
 	}
-	
+
 	public void releaseAll() {
 		lrud = new boolean[4];
 		lrud2 = new boolean[4];
@@ -129,7 +129,7 @@ public class MainChar extends Element {
 	public void handleLateralCollision(boolean[] points, Tile[] tiles) {
 		if (points[3]) { // LEFT SIDE
 			x = tiles[3].getPosition().first() + SCALE;
-			if (!myMap.checkWall(getX(),getY() - SCALE)
+			if (!myMap.checkWall(getX(), getY() - SCALE / 2)
 					&& !myMap.checkWall(getX() - 1, getY() - 1)
 					&& !myMap.checkWall(getX(), tiles[3].getPosition().second()
 							+ SCALE) && dx < 0 && dy > 0) {
@@ -143,7 +143,7 @@ public class MainChar extends Element {
 			}
 			dx = 0;
 		} else if (points[5]) {
-			if (!myMap.checkWall(getX() + SCALE - 1,getY() - SCALE)
+			if (!myMap.checkWall(getX() + SCALE - 1, getY() - SCALE / 2)
 					&& !myMap
 							.checkWall(getX(), tiles[5].getPosition().second())
 					&& !myMap.checkWall(getX(), tiles[5].getPosition().second()
@@ -216,6 +216,14 @@ public class MainChar extends Element {
 			lastkey = -1;
 			keycount = 0;
 		}
+
+		if (hang != null) {
+			if (getY() <= hang.getPosition().second() - 32
+					&& Math.abs(hang.getPosition().first() - getX()) < SCALE) {
+				hang = null;
+			}
+		}
+
 		if (lrud[2]) { // pressing the UP arrow
 			if (hang != null) {
 				hang = null;
@@ -303,7 +311,6 @@ public class MainChar extends Element {
 		int key = e.getKeyCode();
 		if (keycount == 0)
 			doubletimer = 200;
-		
 
 		if (key == Board.UP) {
 			lrud[2] = true;
