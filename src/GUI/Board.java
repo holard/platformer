@@ -17,6 +17,11 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import Objects.Block;
+import Objects.MainChar;
+import Objects.Projectile;
+import Objects.Tile;
+
 public class Board extends JPanel implements ActionListener {
 	// 0 = l, 1 = r, 2 = u, 3 = d, 4 = f, 5 = g, 6 = p
 	private Timer timer;

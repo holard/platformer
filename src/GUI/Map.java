@@ -3,6 +3,8 @@ package GUI;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Objects.Tile;
+
 public class Map {
 	private HashMap<Pair<Integer, Integer>, Tile> grid;
 	public static int DEFAULT_SIZE = 16;
