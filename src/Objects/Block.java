@@ -2,37 +2,24 @@ package Objects;
 
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.io.File;
+import java.net.MalformedURLException;
 
 import javax.swing.ImageIcon;
 
 import GUI.Pair;
 
 
-public class Block implements Tile{
+public abstract class Block implements Tile{
 
-    private String craft = "block.png";
+    public static final String IMAGE_PATH = "Images/Tiles/";
 
-    private int x;
-    private int y;
-    private int width;
-    private int height;
-    private boolean visible;
-    private Image image;
-
-    public Block(int x, int y) {
-        ImageIcon ii = new ImageIcon(this.getClass().getResource(craft));
-        image = ii.getImage();
-        width = image.getWidth(null);
-        height = image.getHeight(null);
-        visible = true;
-        this.x = x;
-        this.y = y;
-    }
-
-
-    public void move() {
-        
-    }
+    protected int x;
+    protected int y;
+    protected int width;
+    protected int height;
+    protected boolean visible;
+    protected Image image;
 
     public int getX() {
         return x;

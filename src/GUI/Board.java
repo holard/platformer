@@ -28,6 +28,7 @@ public class Board extends JPanel implements ActionListener {
 	public static final int CAM_HB = 192;
 	public static final int CAM_VB = 128;
 	public static final int TIMER = 15;
+	
 	public static int UP = KeyEvent.VK_UP;
 	public static int LEFT = KeyEvent.VK_LEFT;
 	public static int RIGHT = KeyEvent.VK_RIGHT;
@@ -35,9 +36,12 @@ public class Board extends JPanel implements ActionListener {
 	public static int F = KeyEvent.VK_F;
 	public static int G = KeyEvent.VK_G;
 	public static int P = KeyEvent.VK_P;
+	
 	public static final int GLOBALX_START = 0;
 	public static final int GLOBALY_START = 0;
-	public static final String START_MAPFILE = "src/GUI/map1.txt";
+	public static final String MAPPATH = "Maps/";
+	public static final String START_MAPFILE = MAPPATH +  "map1.txt";
+	
 	private MainChar craft;
 	private ArrayList<Tile> blocks;
 	private ArrayList<Projectile> projectiles;
@@ -51,8 +55,6 @@ public class Board extends JPanel implements ActionListener {
 	private int globalx;
 	private int globaly;
 	public boolean paused = false;
-	private int cursX = 100;
-	private int cursY = 200;
 	private int menu = 0;
 	private ArrayList<Page> menupages;
 	private int bIndex;
@@ -109,7 +111,7 @@ public class Board extends JPanel implements ActionListener {
 		ArrayList<Pair<int[], String>> chart = new ArrayList<Pair<int[], String>>();
 		try {
 			BufferedReader BR = new BufferedReader(new FileReader(
-					"src/GUI/xychart.txt"));
+					"xychart.txt"));
 			String line = BR.readLine();
 			String[] elems;
 			int[] xywh;
@@ -169,7 +171,7 @@ public class Board extends JPanel implements ActionListener {
 			globaly = new_xywh[1];
 		}
 
-		setMap(newfile);
+		setMap(MAPPATH + newfile);
 	}
 
 	public void setMap(String file) {

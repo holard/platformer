@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import Objects.BasicBlock;
 import Objects.Block;
 import Objects.Tile;
 
@@ -35,7 +36,7 @@ public class MapReader {
 				for (int j = 0; j < line1.length(); j++) {
 					char c = line1.charAt(j);
 					if (c == 'W')
-						tiles.add(new Block(32 * j, 32 * i));
+						tiles.add(new BasicBlock(32 * j, 32 * i));
 				}
 				line1 = BR.readLine();
 				i += 1;				

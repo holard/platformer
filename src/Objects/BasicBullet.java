@@ -1,5 +1,8 @@
 package Objects;
 
+import java.io.File;
+import java.net.MalformedURLException;
+
 import javax.swing.ImageIcon;
 
 import GUI.Board;
@@ -7,7 +10,13 @@ import GUI.Map;
 
 public class BasicBullet extends Projectile {
 	public BasicBullet(int x, int y, int dx, int dy, Map M, Board B) {
-		ImageIcon ii = new ImageIcon(this.getClass().getResource("missile.png"));
+		ImageIcon ii = null;
+		try {
+			ii = new ImageIcon((new File(IMAGE_PATH + "missile.png")).toURI().toURL());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		
 		image = ii.getImage();
 		visible = true;
 		width = image.getWidth(null);

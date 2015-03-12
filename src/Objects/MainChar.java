@@ -3,6 +3,8 @@ package Objects;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.net.MalformedURLException;
 
 import javax.swing.ImageIcon;
 
@@ -14,10 +16,13 @@ public class MainChar extends Element {
 	public static final int SCALE = 32;
 	public static final int TIMER = 15;
 	public static final int MAX_ENERGY = 100;
+	public static final String IMAGE_PATH = "Images/";
+	
 	private double dx;
 	private double dy;
 	private int jumps = 0;
 	int dir = 1; // -1 is facing left, 1 is facing right
+	
 	private boolean[] lrud = { false, false, false, false };
 	private boolean[] lrud2 = { false, false, false, false };
 	private boolean iChange = false; // image change needed
@@ -31,8 +36,7 @@ public class MainChar extends Element {
 	private boolean hung = false;
 
 	public MainChar(Board myb) {
-		ImageIcon ii = new ImageIcon(this.getClass().getResource("craft.png"));
-		image = ii.getImage();
+		setImage(IMAGE_PATH + "craft.png");
 		width = image.getWidth(null);
 		height = image.getHeight(null);
 		visible = true;
@@ -325,7 +329,7 @@ public class MainChar extends Element {
 		if (key == Board.LEFT) {
 			lrud[0] = true;
 			lrud2[0] = true;
-			setImage("craft2.png");
+			setImage(IMAGE_PATH + "craft2.png");
 			if ((myMap.checkWall(getX(), getY() + height) || myMap.checkWall(
 					getX() + width - 1, getY() + height))
 					&& lastkey == key
@@ -338,7 +342,7 @@ public class MainChar extends Element {
 		if (key == Board.RIGHT) {
 			lrud[1] = true;
 			lrud2[1] = true;
-			setImage("craft.png");
+			setImage(IMAGE_PATH + "craft.png");
 			if ((myMap.checkWall(getX(), getY() + height) || myMap.checkWall(
 					getX() + width - 1, getY() + height))
 					&& lastkey == key
@@ -392,14 +396,14 @@ public class MainChar extends Element {
 			lrud[0] = false;
 			lrud2[0] = false;
 			if (lrud[1])
-				setImage("craft.png");
+				setImage(IMAGE_PATH + "craft.png");
 		}
 
 		if (key == Board.RIGHT) {
 			lrud[1] = false;
 			lrud2[1] = false;
 			if (lrud[0])
-				setImage("craft2.png");
+				setImage(IMAGE_PATH + "craft2.png");
 		}
 
 		if (key == Board.UP) {

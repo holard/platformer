@@ -2,6 +2,8 @@ package Objects;
 
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.io.File;
+import java.net.MalformedURLException;
 
 import javax.swing.ImageIcon;
 
@@ -48,7 +50,12 @@ public abstract class Element {
 	}
 	
 	public void setImage(String file) {
-		ImageIcon ii = new ImageIcon(this.getClass().getResource(file));
+		ImageIcon ii = null;
+		try {
+			ii = new ImageIcon((new File(file)).toURI().toURL());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 		image = ii.getImage();
 	}
 	
