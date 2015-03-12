@@ -6,7 +6,7 @@ import java.awt.Rectangle;
 import javax.swing.ImageIcon;
 
 public abstract class Element {
-	protected int x,y;
+	protected double x,y;
 	protected Image image;
 	protected boolean visible;
 	protected int width, height;
@@ -50,11 +50,11 @@ public abstract class Element {
 	}
 	
 	public int getX() {
-        return x;
+        return (int)(Math.round(x));
     }
 
     public int getY() {
-        return y;
+        return (int)(Math.round(y));
     }
     
     public int getWidth() {
@@ -74,7 +74,7 @@ public abstract class Element {
     }
     
     public Rectangle getBounds() {
-        return new Rectangle(x, y, width, height);
+        return new Rectangle(getX(), getY(), width, height);
     }
     
     public void setX(int x) {

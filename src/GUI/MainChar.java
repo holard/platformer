@@ -33,14 +33,19 @@ public class MainChar extends Element {
 		width = image.getWidth(null);
 		height = image.getHeight(null);
 		visible = true;
-		x = 40;
-		y = 60;
+		x = Board.GLOBALX_START + 2500;
+		y = Board.GLOBALY_START + 50;
 		jumps = 0;
 		myBoard = myb;
 	}
 
 	public void setMap(Map nu) {
 		myMap = nu;
+	}
+	
+	public void releaseAll() {
+		lrud = new boolean[4];
+		lrud2 = new boolean[4];
 	}
 
 	public void handleLR() {
@@ -124,21 +129,24 @@ public class MainChar extends Element {
 	public void handleLateralCollision(boolean[] points, Tile[] tiles) {
 		if (points[3]) { // LEFT SIDE
 			x = tiles[3].getPosition().first() + SCALE;
-			if (!myMap.checkWall(x - 1, y - 1)
-					&& !myMap.checkWall(x, tiles[3].getPosition().second()
+			if (!myMap.checkWall(getX(),getY() - SCALE)
+					&& !myMap.checkWall(getX() - 1, getY() - 1)
+					&& !myMap.checkWall(getX(), tiles[3].getPosition().second()
 							+ SCALE) && dx < 0 && dy > 0) {
 				hang = tiles[3];
 				hung = false;
 				jumps = 0;
-			} else if (!myMap.checkWall(x, y + height + SCALE)
+			} else if (!myMap.checkWall(getX(), getY() + height + SCALE)
 					&& dx < -.15 * TIMER && tiles[3].canStick() && hang == null) {
 				stick = -1;
 				sticktime = 150;
 			}
 			dx = 0;
 		} else if (points[5]) {
-			if (!myMap.checkWall(x, tiles[5].getPosition().second())
-					&& !myMap.checkWall(x, tiles[5].getPosition().second()
+			if (!myMap.checkWall(getX() + SCALE - 1,getY() - SCALE)
+					&& !myMap
+							.checkWall(getX(), tiles[5].getPosition().second())
+					&& !myMap.checkWall(getX(), tiles[5].getPosition().second()
 							+ SCALE) && dx < -.15 * TIMER) {
 				hang = tiles[5];
 				hung = false;
@@ -146,7 +154,7 @@ public class MainChar extends Element {
 			}
 			Tile t = tiles[5];
 			if (dy >= 0
-					&& t.getPosition().second() - (y + dy) > (x + dx)
+					&& t.getPosition().second() - (y + dy) > (getX() + dx)
 							- t.getPosition().first()) {
 				dy = 0;
 				y = t.getPosition().second() - height;
@@ -160,20 +168,24 @@ public class MainChar extends Element {
 		}
 		if (points[4]) { // RIGHT SIDE
 			x = tiles[4].getPosition().first() - width;
-			if (!myMap.checkWall(x + width, y - 1)
-					&& !myMap.checkWall(x + width - 1, tiles[4].getPosition()
-							.second() + SCALE) && dx > 0 && dy > 0) {
+			if (!myMap.checkWall(getX() + width, getY() - 1)
+					&& !myMap.checkWall(getX() + width - 1, tiles[4]
+							.getPosition().second() + SCALE) && dx > 0
+					&& dy > 0) {
 				hang = tiles[4];
-			} else if (!myMap.checkWall(x + width - 1, y + height + SCALE)
+			} else if (!myMap.checkWall(getX() + width - 1, getY() + height
+					+ SCALE)
 					&& dx > .15 * TIMER && tiles[4].canStick()) {
 				stick = 1;
 				sticktime = 150;
 			}
 			dx = 0;
 		} else if (points[7]) {
-			if (!myMap.checkWall(x + width - 1, tiles[7].getPosition().second())
-					&& !myMap.checkWall(x + width - 1, tiles[7].getPosition()
-							.second() + SCALE) && dx > .15 * TIMER) {
+			if (!myMap.checkWall(getX() + width - 1, tiles[7].getPosition()
+					.second())
+					&& !myMap.checkWall(getX() + width - 1, tiles[7]
+							.getPosition().second() + SCALE)
+					&& dx > .15 * TIMER) {
 				hang = tiles[7];
 				hung = false;
 				jumps = 0;
@@ -181,7 +193,7 @@ public class MainChar extends Element {
 			Tile t = tiles[7];
 			if (dy >= 0
 					&& t.getPosition().second() - (y + dy) > t.getPosition()
-							.first() - (x + dx)) {
+							.first() - (getX() + dx)) {
 				dy = 0;
 				y = t.getPosition().second() - height;
 				if (hang == null)
@@ -208,7 +220,7 @@ public class MainChar extends Element {
 			if (hang != null) {
 				hang = null;
 				hung = false;
-				dy = -7;
+				dy = -7.5;
 			} else {
 				if (stick == -1) {
 					if (lrud[1]) {
@@ -224,8 +236,8 @@ public class MainChar extends Element {
 						dy = -TIMER * 0.75;
 						dx = -0.6 * TIMER;
 					}
-				} else if (myMap.checkWall(x, y + height)
-						|| myMap.checkWall(x + width - 1, y + height)) {
+				} else if (myMap.checkWall(getX(), getY() + height)
+						|| myMap.checkWall(getX() + width - 1, getY() + height)) {
 					dy = -TIMER * 0.85;
 				} else if (jumps == 1) {
 					dy = -TIMER * 0.85;
@@ -242,7 +254,7 @@ public class MainChar extends Element {
 			if (dy > 0.1 * TIMER)
 				dy = 0.1 * TIMER;
 		}
-		if (!myMap.checkWall(x, y + height)
+		if (!myMap.checkWall(getX(), getY() + height)
 				&& dy < TIMER - Math.abs(stick * 0.9 * TIMER)) {
 			if (hang == null || hang.getPosition().second() > y)
 				dy += TIMER * 0.05;
@@ -267,8 +279,8 @@ public class MainChar extends Element {
 				jumps = 1;
 			y = t.getPosition().second() - height;
 		}
-		if (!myMap.checkWall(x + width, y + height / 2)
-				&& !myMap.checkWall(x - 1, y + height / 2))
+		if (!myMap.checkWall(getX() + width, getY() + height / 2)
+				&& !myMap.checkWall(getX() - 1, getY() + height / 2))
 			stick = 0;
 
 		if (hang != null && y >= hang.getPosition().second()) {
@@ -280,7 +292,7 @@ public class MainChar extends Element {
 
 		x += dx;
 		y += dy;
-		
+
 		if (outOfBounds()) {
 			myBoard.changeMap(0);
 		}
@@ -291,48 +303,49 @@ public class MainChar extends Element {
 		int key = e.getKeyCode();
 		if (keycount == 0)
 			doubletimer = 200;
-		if (key == KeyEvent.VK_SPACE) {
-		}
+		
 
-		if (key == KeyEvent.VK_UP) {
+		if (key == Board.UP) {
 			lrud[2] = true;
 			lrud2[2] = true;
 
 			lastkey = key;
 		}
 
-		if (key == KeyEvent.VK_LEFT) {
+		if (key == Board.LEFT) {
 			lrud[0] = true;
 			lrud2[0] = true;
 			setImage("craft2.png");
-			if ((myMap.checkWall(x, y + height) || myMap.checkWall(x + width
-					- 1, y + height))
-					&& lastkey == key && keycount == 2) {
+			if ((myMap.checkWall(getX(), getY() + height) || myMap.checkWall(
+					getX() + width - 1, getY() + height))
+					&& lastkey == key
+					&& keycount == 2) {
 				dx = -0.9 * TIMER;
 			}
 			lastkey = key;
 		}
 
-		if (key == KeyEvent.VK_RIGHT) {
+		if (key == Board.RIGHT) {
 			lrud[1] = true;
 			lrud2[1] = true;
 			setImage("craft.png");
-			if ((myMap.checkWall(x, y + height) || myMap.checkWall(x + width
-					- 1, y + height))
-					&& lastkey == key && keycount == 2) {
+			if ((myMap.checkWall(getX(), getY() + height) || myMap.checkWall(
+					getX() + width - 1, getY() + height))
+					&& lastkey == key
+					&& keycount == 2) {
 				dx = 0.9 * TIMER;
 			}
 			lastkey = key;
 		}
 
-		if (key == KeyEvent.VK_DOWN) {
+		if (key == Board.DOWN) {
 			lrud[3] = true;
 			lrud2[3] = true;
 			hang = null;
 			lastkey = key;
 		}
 
-		if (key == KeyEvent.VK_F) {
+		if (key == Board.F) {
 			lastkey = key;
 			if (stick == 0)
 				fireBasic();
@@ -351,11 +364,11 @@ public class MainChar extends Element {
 		int b_width = bullet.getWidth();
 		int b_height = bullet.getHeight();
 		if (dir == 1) {
-			bullet_x = x + width;
-			bullet_y = y + height / 2 - b_height / 2;
+			bullet_x = getX() + width;
+			bullet_y = getY() + height / 2 - b_height / 2;
 		} else {
-			bullet_x = x - b_width;
-			bullet_y = y + height / 2 - b_height / 2;
+			bullet_x = getX() - b_width;
+			bullet_y = getY() + height / 2 - b_height / 2;
 		}
 
 		myBoard.getProjectiles().add(
@@ -365,25 +378,25 @@ public class MainChar extends Element {
 
 	public void keyReleased(KeyEvent e) {
 		int key = e.getKeyCode();
-		if (key == KeyEvent.VK_LEFT) {
+		if (key == Board.LEFT) {
 			lrud[0] = false;
 			lrud2[0] = false;
 			if (lrud[1])
 				setImage("craft.png");
 		}
 
-		if (key == KeyEvent.VK_RIGHT) {
+		if (key == Board.RIGHT) {
 			lrud[1] = false;
 			lrud2[1] = false;
 			if (lrud[0])
 				setImage("craft2.png");
 		}
 
-		if (key == KeyEvent.VK_UP) {
+		if (key == Board.UP) {
 			lrud[2] = false;
 			lrud2[2] = false;
 		}
-		if (key == KeyEvent.VK_DOWN) {
+		if (key == Board.DOWN) {
 			lrud[3] = false;
 			lrud2[3] = false;
 		}
