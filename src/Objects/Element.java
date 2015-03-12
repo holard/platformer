@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
 
 import GUI.Board;
 import GUI.Map;
+import Objects.Tiles.Tile;
 
 public abstract class Element {
 	protected double x,y;

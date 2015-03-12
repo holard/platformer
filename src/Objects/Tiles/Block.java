@@ -1,4 +1,4 @@
-package Objects;
+package Objects.Tiles;
 
 import java.awt.Image;
 import java.awt.Rectangle;

@@ -1,4 +1,6 @@
-package Objects;
+package Objects.Projectiles;
+
+import Objects.Element;
 
 
 public abstract class Projectile extends Element {	

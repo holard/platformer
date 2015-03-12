@@ -10,6 +10,8 @@ import javax.swing.ImageIcon;
 
 import GUI.Board;
 import GUI.Map;
+import Objects.Projectiles.BasicBullet;
+import Objects.Tiles.Tile;
 
 public class MainChar extends Element {
 

@@ -1,4 +1,4 @@
-package Objects;
+package Objects.Projectiles;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 
 import GUI.Board;
 import GUI.Map;
+import Objects.Tiles.Tile;
 
 public class BasicBullet extends Projectile {
 	public BasicBullet(int x, int y, int dx, int dy, Map M, Board B) {

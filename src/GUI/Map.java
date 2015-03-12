@@ -3,7 +3,7 @@ package GUI;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import Objects.Tile;
+import Objects.Tiles.Tile;
 
 public class Map {
 	private HashMap<Pair<Integer, Integer>, Tile> grid;

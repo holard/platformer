@@ -5,9 +5,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import Objects.BasicBlock;
-import Objects.Block;
-import Objects.Tile;
+import Objects.Tiles.BasicBlock;
+import Objects.Tiles.Block;
+import Objects.Tiles.Tile;
 
 public class MapReader {
 	private String mapFile;

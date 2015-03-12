@@ -1,4 +1,4 @@
-package Objects;
+package Objects.Tiles;
 
 import java.io.File;
 import java.net.MalformedURLException;
