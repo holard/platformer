@@ -23,6 +23,7 @@ public class BubbleProj extends Projectile {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
+		damage = 1;
 		time = new Random().nextInt(500) + 500;
 		image = ii.getImage();
 		visible = true;
@@ -59,11 +60,11 @@ public class BubbleProj extends Projectile {
 		boolean[] points = new boolean[8];
 		Tile[] tiles = new Tile[8];
 		epquery(points, tiles, (int) (x), (int) (y), width, height);
-		if (points[1]) {
+		if (points[1] && y+height/2 > tiles[1].getY()+MainChar.SCALE/2) {
 			dy = 0;
 			y = tiles[1].getPosition().second() + MainChar.SCALE;
 		}
-		if (points[6]) {
+		if (points[6] && y+height/2 < tiles[6].getY()+MainChar.SCALE/2) {
 			y = tiles[6].getPosition().second() - height;
 			dy = 0;
 		} else {

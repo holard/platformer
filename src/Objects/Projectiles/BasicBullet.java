@@ -9,7 +9,7 @@ public class BasicBullet extends Projectile {
 		setImage(IMAGE_PATH + "missile.png");	
 		initProjectile(x,y,dx,dy,M,B);
 		
-		damage = 3;
+		damage = 90;
 		mass = 30;
 		visible = true;
 		friendly = true;	

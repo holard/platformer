@@ -14,7 +14,7 @@ public class Slime1 extends Enemy {
 		System.out.println("Spawning slime at " + Double.toString(x) + " " + Double.toString(y));
 		setImage(IMAGE_PATH + "slime1.png");
 		initEnemy(x,y,M,B);
-		health = 8;
+		health = 240;
 		visible = true;
 		dx = -SPEED;
 		dy = 0;
