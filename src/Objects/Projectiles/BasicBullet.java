@@ -17,7 +17,7 @@ public class BasicBullet extends Projectile {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		
+		mass = 30;
 		image = ii.getImage();
 		visible = true;
 		width = image.getWidth(null);

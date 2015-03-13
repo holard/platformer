@@ -94,7 +94,7 @@ public class Board extends JPanel implements ActionListener {
 		myItems = new ArrayList<Item>();
 
 		myItems.add(new gun1());
-		myItems.add(new gun1());
+		myItems.add(new bubblegun());
 		myItems.add(new gun2());
 		ArrayList<Button> mmButtons = new ArrayList<Button>();
 		/*
