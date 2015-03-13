@@ -202,7 +202,7 @@ public class Board extends JPanel implements ActionListener {
 	public void setMap(String file) {
 		MapReader MR = new MapReader(file);
 		blocks = MR.makeMap();
-		projectiles = new ArrayList<Projectile>();
+		projectiles = new ArrayList<Projectile>(10000);
 		M = new Map(blocks);
 		craft.myMap = M;
 	}
