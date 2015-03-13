@@ -10,10 +10,10 @@ public abstract class Item {
 	protected Image image;
 	public int xOffset;
 	public int yOffset;
+	
 	public abstract String getName();
 	public abstract String getDescription();
 	public abstract boolean isFireable();
-	public abstract void fire(int x, int y, int width, int height, int dir, Map m, Board b);
 	public abstract Image getImage();
 	public abstract boolean isConsumable();
 	public abstract boolean isWearable();

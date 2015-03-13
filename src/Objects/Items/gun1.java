@@ -12,11 +12,13 @@ import GUI.Map;
 import Objects.Projectiles.BasicBullet;
 import Objects.Projectiles.Projectile;
 
-public class gun1 extends Item {
+public class gun1 extends Gun {
 	private String name = "Basic Gun";
 	private String description = "Just a trusty, rusty, dusty gun.";
 	
 	public gun1() {
+		reloadRate = 300;
+		loaded = true;
 		ImageIcon ii = null;
 		try {
 			ii = new ImageIcon((new File(IMAGE_PATH + "gun1.png")).toURI().toURL());
@@ -45,6 +47,9 @@ public class gun1 extends Item {
 
 	@Override
 	public void fire(int x, int y, int width, int height, int dir, Map m, Board b) {
+		if (!loaded) {
+			return;
+		}
 		int bullet_dx = 10 * dir;
 		int bullet_dy = 0;
 		int bullet_x, bullet_y;
@@ -63,7 +68,7 @@ public class gun1 extends Item {
 		b.getProjectiles().add(
 				new BasicBullet(bullet_x, bullet_y, bullet_dx, bullet_dy,
 						m, b));
-		
+		super.fire();
 	}
 
 	@Override

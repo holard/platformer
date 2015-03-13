@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 
 import GUI.Board;
 import GUI.Map;
+import Objects.Items.Gun;
 import Objects.Items.Item;
 import Objects.Items.gun1;
 import Objects.Projectiles.BasicBullet;
@@ -37,7 +38,8 @@ public class MainChar extends Element {
 	private int keycount = 0;
 	private Tile hang;
 	private boolean hung = false;
-	private Item myGun;
+	private Gun myGun;
+	private boolean firing = false;
 	
 	public MainChar(Board myb) {
 		setImage(IMAGE_PATH + "craft.png");
@@ -57,6 +59,7 @@ public class MainChar extends Element {
 	public void releaseAll() {
 		lrud = new boolean[4];
 		lrud2 = new boolean[4];
+		firing = false;
 	}
 
 	public void handleLR() {
@@ -265,6 +268,7 @@ public class MainChar extends Element {
 		if (stick != 0) {
 			if (dy > 0.1 * TIMER)
 				dy = 0.1 * TIMER;
+			firing = false;
 		}
 		if (!myMap.checkWall(getX(), getY() + height)
 				&& dy < TIMER - Math.abs(stick * 0.9 * TIMER)) {
@@ -299,6 +303,10 @@ public class MainChar extends Element {
 			if (dy >= 0)
 				hung = true;
 			dy = 0;
+			firing = false;
+		}
+		if (stick != 0 || hang != null) {
+			firing = false;
 		}
 
 	}
@@ -323,7 +331,10 @@ public class MainChar extends Element {
 		
 		x += dx;
 		y += dy;
-
+		if (firing) {
+			fireBasic();
+		}
+		myGun.loadMe(TIMER);
 		if (outOfBounds()) {
 			myBoard.changeMap(0);
 		}
@@ -378,7 +389,7 @@ public class MainChar extends Element {
 		if (key == Board.F) {
 			lastkey = key;
 			if (stick == 0)
-				fireBasic();
+				firing = true;
 		}
 
 		keycount = 1;
@@ -412,6 +423,9 @@ public class MainChar extends Element {
 			lrud[3] = false;
 			lrud2[3] = false;
 		}
+		if (key == Board.F) {
+			firing = false;
+		}
 		lastkey = key;
 		keycount = 2;
 	}
@@ -420,7 +434,7 @@ public class MainChar extends Element {
 		return myGun;
 	}
 
-	public void setMyGun(Item myGun) {
+	public void setMyGun(Gun myGun) {
 		this.myGun = myGun;
 	}
 }

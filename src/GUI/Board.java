@@ -54,7 +54,7 @@ public class Board extends JPanel implements ActionListener {
 	private ArrayList<Tile> blocks;
 	private ArrayList<Projectile> projectiles;
 	private ArrayList<Pair<int[], String>> xychart;
-	private ArrayList<Item> myItems;
+	private ArrayList<Gun> myGuns;
 	private boolean ingame;
 	private Map M;
 	private int camx;
@@ -70,7 +70,7 @@ public class Board extends JPanel implements ActionListener {
 	private ArrayList<Item> storage;
 	private int bIndex;
 	private int toConf = -1;
-	private Item currGun;
+	private Gun currGun;
 	private Item confirmStore = null;
 
 	public Board() {
@@ -91,11 +91,11 @@ public class Board extends JPanel implements ActionListener {
 		bIndex = 0;
 		timer = new Timer(TIMER, this);
 		timer.start();
-		myItems = new ArrayList<Item>();
+		myGuns = new ArrayList<Gun>();
 
-		myItems.add(new gun1());
-		myItems.add(new bubblegun());
-		myItems.add(new gun2());
+		myGuns.add(new gun1());
+		myGuns.add(new bubblegun());
+		myGuns.add(new gun2());
 		ArrayList<Button> mmButtons = new ArrayList<Button>();
 		/*
 		 * g2d.drawString("MAIN MENU", 150, 100); g2d.drawString("START GAME",
@@ -395,7 +395,8 @@ public class Board extends JPanel implements ActionListener {
 		public void initEquips() {
 			if (menu == 1) {
 				EquipPage ep = (EquipPage) gamepages.get(1);
-				ep.setItems(currGun, myItems);
+				ArrayList<Item> temp = new ArrayList<Item>(myGuns);
+				ep.setItems(currGun, temp);
 			}
 		}
 
@@ -533,9 +534,9 @@ public class Board extends JPanel implements ActionListener {
 						if (menu == 1) { // EQUIP PAGE
 							if (confirmStore == null) {
 								if (key == F) {
-									if (myItems.size() > 0) {
-										Item n = myItems.remove(bIndex);
-										myItems.add(currGun);
+									if (myGuns.size() > 0) {
+										Gun n = myGuns.remove(bIndex);
+										myGuns.add(currGun);
 										craft.setMyGun(n);
 										currGun = n;
 										initEquips();
@@ -543,15 +544,15 @@ public class Board extends JPanel implements ActionListener {
 
 								}
 								if (key == G) {
-									if (myItems.size() > 0) {
-										confirmStore = myItems.get(bIndex);
+									if (myGuns.size() > 0) {
+										confirmStore = myGuns.get(bIndex);
 									}
 								}
 							} else {
 								if (key == F) {
-									if (myItems.size() > 0) {
+									if (myGuns.size() > 0) {
 										storage.add(confirmStore);
-										myItems.remove(confirmStore);
+										myGuns.remove(confirmStore);
 										if (bIndex > 0) {
 											bIndex -= 1;
 										} else {

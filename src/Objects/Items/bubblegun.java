@@ -14,11 +14,13 @@ import Objects.Projectiles.BasicBullet;
 import Objects.Projectiles.BubbleProj;
 import Objects.Projectiles.Projectile;
 
-public class bubblegun extends Item {
+public class bubblegun extends Gun {
 	private String name = "BubbleGun";
 	private String description = "Shoots bubbles. What did you expect?";
 	
 	public bubblegun() {
+		reloadRate = 1;
+		loaded = true;
 		ImageIcon ii = null;
 		try {
 			ii = new ImageIcon((new File(IMAGE_PATH + "gun2.png")).toURI().toURL());
@@ -47,6 +49,9 @@ public class bubblegun extends Item {
 
 	@Override
 	public void fire(int x, int y, int width, int height, int dir, Map m, Board b) {
+		if (!loaded) {
+			return;
+		}
 		int bullet_dx = 3 * dir;
 		int bullet_dy = 0;
 		int bullet_x, bullet_y;
@@ -68,7 +73,7 @@ public class bubblegun extends Item {
 				new BubbleProj(bullet_x, bullet_y, bullet_dx, bullet_dy-(int)(5*r.nextDouble()),
 						m, b));
 		
-		
+		super.fire();
 	}
 
 	@Override

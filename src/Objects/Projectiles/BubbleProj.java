@@ -21,7 +21,7 @@ public class BubbleProj extends Projectile {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		time = new Random().nextInt(800)+1000;
+		time = new Random().nextInt(500)+500;
 		image = ii.getImage();
 		visible = true;
 		width = image.getWidth(null);
