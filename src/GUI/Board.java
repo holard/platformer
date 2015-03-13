@@ -24,6 +24,7 @@ import GUI.Pages.ItemButton;
 import GUI.Pages.MenuButton;
 import GUI.Pages.MenuPage;
 import GUI.Pages.Page;
+import Objects.Enemies.Enemy;
 import Objects.Items.*;
 import Objects.MainChar;
 import Objects.Projectiles.Projectile;
@@ -48,11 +49,12 @@ public class Board extends JPanel implements ActionListener {
 	public static final int GLOBALX_START = 0;
 	public static final int GLOBALY_START = 0;
 	public static final String MAPPATH = "Maps/";
-	public static final String START_MAPFILE = MAPPATH + "map1.txt";
+	public static final String START_MAPFILE = MAPPATH + "map1";
 
 	private MainChar craft;
 	private ArrayList<Tile> blocks;
 	private ArrayList<Projectile> projectiles;
+	private ArrayList<Enemy> enemies;
 	private ArrayList<Pair<int[], String>> xychart;
 	private ArrayList<Gun> myGuns;
 	private boolean ingame;
@@ -97,6 +99,7 @@ public class Board extends JPanel implements ActionListener {
 		myGuns.add(new bubblegun());
 		myGuns.add(new gun2());
 		ArrayList<Button> mmButtons = new ArrayList<Button>();
+		
 		/*
 		 * g2d.drawString("MAIN MENU", 150, 100); g2d.drawString("START GAME",
 		 * 150, 200); g2d.drawString("CREDITS", 150, 300); g2d.drawString(">",
@@ -200,32 +203,53 @@ public class Board extends JPanel implements ActionListener {
 	}
 
 	public void setMap(String file) {
-		MapReader MR = new MapReader(file);
-		blocks = MR.makeMap();
-		projectiles = new ArrayList<Projectile>(10000);
+		MapReader MR = new MapReader(file + "/tiles.txt");
+		blocks = MR.makeMap();		
 		M = new Map(blocks);
 		craft.myMap = M;
+		
+		ObjectReader OR = new ObjectReader(file + "/objects.txt", M, this);
+		enemies = OR.makeEnemies();
+		projectiles = new ArrayList<Projectile>(10000);
 	}
-
+	
+	//Returns enemy at x and y, if none return null
+	public Enemy checkEnemy(double x, double y) {
+		for (int i = 0; i < enemies.size(); i++) {
+			Enemy e = enemies.get(i);
+			if ((x >= e.getX()) && 
+				(y >= e.getY()) &&
+				(x < e.getX() + e.getWidth()) && 
+				(y < e.getY() + e.getHeight()))
+				return e;
+		}
+		return null;
+	}
+	
+	public void updateCam() {
+		if (craft.getX() < camx + CAM_HB) {
+			camx = Math.max(0, craft.getX() - CAM_HB);
+		}
+		if (craft.getX() + craft.getWidth() > camx + camw - CAM_HB) {
+			camx = Math.min(M.getWidth() - camw, craft.getX() + CAM_HB
+					- camw + craft.getWidth());
+		}
+		if (craft.getY() < camy + CAM_VB) {
+			camy = Math.max(0, craft.getY() - CAM_VB);
+		}
+		if (craft.getY() + craft.getHeight() > camy + camh - CAM_VB) {
+			camy = Math.min(M.getHeight() - camh, craft.getY() + CAM_VB
+					- camh + craft.getHeight());
+		}
+	}
+	
 	public void paint(Graphics g) {
 		super.paint(g);
+		Graphics2D g2d = (Graphics2D) g;
 		if (ingame) { // pause page or in game
-			Graphics2D g2d = (Graphics2D) g;
+			
 			if (menu <= 0) {
-				if (craft.getX() < camx + CAM_HB) {
-					camx = Math.max(0, craft.getX() - CAM_HB);
-				}
-				if (craft.getX() + craft.getWidth() > camx + camw - CAM_HB) {
-					camx = Math.min(M.getWidth() - camw, craft.getX() + CAM_HB
-							- camw + craft.getWidth());
-				}
-				if (craft.getY() < camy + CAM_VB) {
-					camy = Math.max(0, craft.getY() - CAM_VB);
-				}
-				if (craft.getY() + craft.getHeight() > camy + camh - CAM_VB) {
-					camy = Math.min(M.getHeight() - camh, craft.getY() + CAM_VB
-							- camh + craft.getHeight());
-				}
+				updateCam();
 
 				if (craft.isVisible()) {
 					g2d.drawImage(craft.getImage(), craft.getX() - camx,
@@ -249,6 +273,13 @@ public class Board extends JPanel implements ActionListener {
 					Projectile p = (Projectile) projectiles.get(i);
 					if (p.isVisible())
 						g2d.drawImage(p.getImage(), p.getX() - camx, p.getY()
+								- camy, this);
+				}
+				
+				for (int i = 0; i < enemies.size(); i++) {
+					Enemy e = enemies.get(i);
+					if (e.isVisible())
+						g2d.drawImage(e.getImage(), e.getX() - camx, e.getY()
 								- camy, this);
 				}
 			}
@@ -307,7 +338,6 @@ public class Board extends JPanel implements ActionListener {
 			}
 			g2d.setColor(Color.WHITE);
 		} else {
-			Graphics2D g2d = (Graphics2D) g;
 			g2d.setColor(Color.WHITE);
 			Page curMenu = menupages.get(menu);
 			ArrayList<Button> curButtons = curMenu.getButtons();
@@ -374,16 +404,25 @@ public class Board extends JPanel implements ActionListener {
 			repaint();
 			return;
 		}
+		
 		craft.move();
 		for (int i = 0; i < projectiles.size(); i++) {
 			Projectile p = projectiles.get(i);
 			p.move();
+		}
+		for (int i = 0; i < enemies.size(); i++) {	
+			Enemy e1 = enemies.get(i);
+			e1.move();
 		}
 		repaint();
 	}
 
 	public ArrayList<Projectile> getProjectiles() {
 		return projectiles;
+	}
+	
+	public ArrayList<Enemy> getEnemies() {
+		return enemies;
 	}
 
 	private class TAdapter extends KeyAdapter {

@@ -1,35 +1,18 @@
 package Objects.Projectiles;
 
-import java.io.File;
-import java.net.MalformedURLException;
-
-import javax.swing.ImageIcon;
-
 import GUI.Board;
 import GUI.Map;
 import Objects.Tiles.Tile;
 
 public class BasicBullet extends Projectile {
-	public BasicBullet(int x, int y, int dx, int dy, Map M, Board B) {
-		ImageIcon ii = null;
-		try {
-			ii = new ImageIcon((new File(IMAGE_PATH + "missile.png")).toURI().toURL());
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		mass = 30;
-		image = ii.getImage();
-		visible = true;
-		width = image.getWidth(null);
-		height = image.getHeight(null);
-		friendly = true;
+	public BasicBullet(double x, double y, double dx, double dy, Map M, Board B) {
+		setImage(IMAGE_PATH + "missile.png");	
+		initProjectile(x,y,dx,dy,M,B);
 		
-		myMap = M;
-		myBoard = B;
-		this.x = x;
-		this.y = y;
-		this.dx = dx;
-		this.dy = dy;
+		damage = 3;
+		mass = 30;
+		visible = true;
+		friendly = true;	
 	}
 	
 	public void move() {		

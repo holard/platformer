@@ -17,8 +17,7 @@ import Objects.Projectiles.BasicBullet;
 import Objects.Tiles.Tile;
 
 public class MainChar extends Element {
-
-	public static final int SCALE = 32;
+	
 	public static final int TIMER = 15;
 	public static final int MAX_ENERGY = 100;
 	public static final String IMAGE_PATH = "Images/";
@@ -52,8 +51,8 @@ public class MainChar extends Element {
 		myBoard = myb;
 	}
 
-	public void setMap(Map nu) {
-		myMap = nu;
+	public void setMap(Map newMap) {
+		myMap = newMap;
 	}
 
 	public void releaseAll() {
@@ -219,6 +218,7 @@ public class MainChar extends Element {
 			}
 		}
 	}
+	
 	public void handleJump() {
 		if (lrud[2]) { // pressing the UP arrow
 			if (hang != null) {
@@ -251,6 +251,7 @@ public class MainChar extends Element {
 			lrud[2] = false;
 		}
 	}
+	
 	public void handleDoubleTap() {
 		doubletimer -= TIMER;
 		if (doubletimer <= 0) {
@@ -282,6 +283,7 @@ public class MainChar extends Element {
 			}
 		}
 	}
+	
 	public void handleGravity(boolean[] points, Tile[] tiles) {
 		if (points[6]) {
 			Tile t = tiles[6];

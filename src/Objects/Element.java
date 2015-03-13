@@ -9,9 +9,11 @@ import javax.swing.ImageIcon;
 
 import GUI.Board;
 import GUI.Map;
+import Objects.Enemies.Enemy;
 import Objects.Tiles.Tile;
 
 public abstract class Element {
+	public static final int SCALE = 32;
 	protected double x,y;
 	protected Image image;
 	protected boolean visible;
@@ -39,6 +41,23 @@ public abstract class Element {
 		tiles[7] = myMap.getWallAt(x + width, y + height);
 	}
 	
+	//Returns colliding enemy otherwise nulls
+	public Enemy enemyCollide() {
+		Enemy[] fpquery = new Enemy[4];
+		
+		//0:top left, 1: top right, 2: bottom left, 3:bottom right;
+		fpquery[0] = myBoard.checkEnemy(x,y);
+		fpquery[1] = myBoard.checkEnemy(x + width,y);
+		fpquery[2] = myBoard.checkEnemy(x,y + height);
+		fpquery[3] = myBoard.checkEnemy(x + width,y + height);
+		
+		for (int i = 0; i < 4; i++) {
+			if (fpquery[i] != null)
+				return fpquery[i];
+		}
+		return null;
+	}
+	
 	public boolean outOfBounds() {
 		return ((x + width/2 > myMap.getWidth()) ||
 				(y + height/2 > myMap.getHeight()) ||
@@ -58,6 +77,9 @@ public abstract class Element {
 			e.printStackTrace();
 		}
 		image = ii.getImage();
+		
+		width = image.getWidth(null);
+		height = image.getHeight(null);
 	}
 	
 	public int getX() {
