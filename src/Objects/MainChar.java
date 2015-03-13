@@ -10,6 +10,8 @@ import javax.swing.ImageIcon;
 
 import GUI.Board;
 import GUI.Map;
+import Objects.Items.Item;
+import Objects.Items.gun1;
 import Objects.Projectiles.BasicBullet;
 import Objects.Tiles.Tile;
 
@@ -24,7 +26,6 @@ public class MainChar extends Element {
 	private double dy;
 	private int jumps = 0;
 	int dir = 1; // -1 is facing left, 1 is facing right
-	
 	private boolean[] lrud = { false, false, false, false };
 	private boolean[] lrud2 = { false, false, false, false };
 	private boolean iChange = false; // image change needed
@@ -36,7 +37,8 @@ public class MainChar extends Element {
 	private int keycount = 0;
 	private Tile hang;
 	private boolean hung = false;
-
+	private Item myGun;
+	
 	public MainChar(Board myb) {
 		setImage(IMAGE_PATH + "craft.png");
 		width = image.getWidth(null);
@@ -214,25 +216,7 @@ public class MainChar extends Element {
 			}
 		}
 	}
-
-	public void move() {
-		handleLR();
-		boolean[] points = new boolean[8];
-		Tile[] tiles = new Tile[8];
-		doubletimer -= TIMER;
-		if (doubletimer <= 0) {
-			doubletimer = 0;
-			lastkey = -1;
-			keycount = 0;
-		}
-
-		if (hang != null) {
-			if (getY() <= hang.getPosition().second() - 32
-					&& Math.abs(hang.getPosition().first() - getX()) < SCALE) {
-				hang = null;
-			}
-		}
-
+	public void handleJump() {
 		if (lrud[2]) { // pressing the UP arrow
 			if (hang != null) {
 				hang = null;
@@ -263,6 +247,17 @@ public class MainChar extends Element {
 			}
 			lrud[2] = false;
 		}
+	}
+	public void handleDoubleTap() {
+		doubletimer -= TIMER;
+		if (doubletimer <= 0) {
+			doubletimer = 0;
+			lastkey = -1;
+			keycount = 0;
+		}
+	}
+	
+	public void handleStickHang() {
 		if (lrud[3]) {
 			stick = 0;
 		}
@@ -276,18 +271,14 @@ public class MainChar extends Element {
 			if (hang == null || hang.getPosition().second() > y)
 				dy += TIMER * 0.05;
 		}
-
-		epquery(points, tiles, (int) (x + dx), (int) (y + dy), width, height);
-		// 0: topl, 1: top, 2: topr, 3: l, 4: r, 5: bl, 6: b, 7: br
-		if (dx != 0) {
-			dir = (int) (dx / (Math.abs(dx)));
+		if (hang != null) {
+			if (getY() <= hang.getPosition().second() - 32
+					&& Math.abs(hang.getPosition().first() - getX()) < SCALE) {
+				hang = null;
+			}
 		}
-
-		if (stick != 0)
-			dir = -stick;
-
-		handleLateralCollision(points, tiles);
-		handleCeilingCollision(points, tiles);
+	}
+	public void handleGravity(boolean[] points, Tile[] tiles) {
 		if (points[6]) {
 			Tile t = tiles[6];
 			dy = 0;
@@ -296,6 +287,9 @@ public class MainChar extends Element {
 				jumps = 1;
 			y = t.getPosition().second() - height;
 		}
+	}
+	
+	public void handleStickHangCheckers() {
 		if (!myMap.checkWall(getX() + width, getY() + height / 2)
 				&& !myMap.checkWall(getX() - 1, getY() + height / 2))
 			stick = 0;
@@ -307,6 +301,26 @@ public class MainChar extends Element {
 			dy = 0;
 		}
 
+	}
+	public void move() {
+		handleLR();
+		handleDoubleTap();
+		handleJump();
+		handleStickHang();
+
+		boolean[] points = new boolean[8];
+		Tile[] tiles = new Tile[8];
+		epquery(points, tiles, (int) (x + dx), (int) (y + dy), width, height);
+		
+		if (dx != 0) {
+			dir = (int) (dx / (Math.abs(dx)));
+		}
+
+		handleLateralCollision(points, tiles);
+		handleCeilingCollision(points, tiles);
+		handleGravity(points, tiles);
+		handleStickHangCheckers();
+		
 		x += dx;
 		y += dy;
 
@@ -371,25 +385,7 @@ public class MainChar extends Element {
 	}
 
 	public void fireBasic() {
-		int bullet_dx = 10 * dir;
-		int bullet_dy = 0;
-		int bullet_x, bullet_y;
-
-		BasicBullet bullet = new BasicBullet(0, 0, bullet_dx, bullet_dy, myMap,
-				myBoard);
-		int b_width = bullet.getWidth();
-		int b_height = bullet.getHeight();
-		if (dir == 1) {
-			bullet_x = getX() + width;
-			bullet_y = getY() + height / 2 - b_height / 2;
-		} else {
-			bullet_x = getX() - b_width;
-			bullet_y = getY() + height / 2 - b_height / 2;
-		}
-
-		myBoard.getProjectiles().add(
-				new BasicBullet(bullet_x, bullet_y, bullet_dx, bullet_dy,
-						myMap, myBoard));
+		myGun.fire(getX(), getY(), width, height, dir, myMap, myBoard);
 	}
 
 	public void keyReleased(KeyEvent e) {
@@ -418,5 +414,13 @@ public class MainChar extends Element {
 		}
 		lastkey = key;
 		keycount = 2;
+	}
+
+	public Item getMyGun() {
+		return myGun;
+	}
+
+	public void setMyGun(Item myGun) {
+		this.myGun = myGun;
 	}
 }
