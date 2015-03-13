@@ -68,7 +68,7 @@ public class bubblegun extends Gun {
 			bullet_y = y + height / 2 - b_height / 2;
 		}
 		Random r = new Random();
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 2; i++)
 		b.getProjectiles().add(
 				new BubbleProj(bullet_x, bullet_y, bullet_dx, bullet_dy-(int)(5*r.nextDouble()),
 						m, b));
