@@ -7,13 +7,13 @@ import Objects.Tiles.Tile;
 public class Slime2 extends Enemy {
 	
 	public Slime2 (Double x, Double y, Map M, Board B) {
-		SPEED = 3;
-		MAX_VERTICAL_SPEED = 6;
-		JUMP_SPEED = -1;
+		SPEED = 5;
+		MAX_VERTICAL_SPEED = 8;
+		JUMP_SPEED = -6;
 		System.out.println("Spawning slime at " + Double.toString(x) + " " + Double.toString(y));
 		setImage(IMAGE_PATH + "slime2.png");
+		health = 300;
 		initEnemy(x,y,M,B);
-		health = 150;
 		visible = true;
 		dx = -SPEED;
 		dy = 0;
@@ -21,6 +21,6 @@ public class Slime2 extends Enemy {
 		xKnockBack = 10;
 		yKnockBack = 4;
 		
-		myAI = new aggressivePlatformAI(200, SCALE*5);
+		myAI = new aggressiveLeapAI(1000,200, SCALE*5);
 	}
 }

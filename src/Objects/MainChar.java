@@ -349,6 +349,7 @@ public class MainChar extends Element {
 					dx = 0;
 					dy = 0;
 					invince = 500;
+					releaseAll();
 				}
 			}
 	}

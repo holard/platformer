@@ -316,6 +316,7 @@ public class Board extends JPanel implements ActionListener {
 					if (e.isVisible())
 						g2d.drawImage(e.getImage(), e.getX() - camx, e.getY()
 								- camy, this);
+						e.drawHealth(g2d,camx,camy);
 				}
 
 				handleGunBar(g2d);
