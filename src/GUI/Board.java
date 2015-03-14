@@ -187,6 +187,7 @@ public class Board extends JPanel implements ActionListener {
 			// Set the character's new relative x and y
 			craft.setX(craft.getX() + (globalx - new_xywh[0]));
 			craft.setY(craft.getY() + (globaly - new_xywh[1]));
+			craft.checkPoint();
 			if (new_xywh[0] == globalx && new_xywh[1] == globaly) {
 				return;
 			}
@@ -281,7 +282,7 @@ public class Board extends JPanel implements ActionListener {
 			if (menu <= 0) {
 				updateCam();
 
-				if (craft.isVisible() && (craft.getInvince() / INVINCIBILITY_FLASH_RATE) % 2 == 0) {
+				if (craft.isVisible() && (craft.getInvince() / INVINCIBILITY_FLASH_RATE) % 4 != 1) {
 					g2d.drawImage(craft.getImage(), craft.getX() - camx,
 							craft.getY() - camy, this);
 					if (craft.getMyGun() != null) {
@@ -293,7 +294,7 @@ public class Board extends JPanel implements ActionListener {
 				}
 
 				for (int i = 0; i < blocks.size(); i++) {
-					Block a = (Block) blocks.get(i);
+					Tile a = (Tile) blocks.get(i);
 					if (a.isVisible())
 						g2d.drawImage(a.getImage(), a.getX() - camx, a.getY()
 								- camy, this);

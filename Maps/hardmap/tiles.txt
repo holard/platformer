@@ -6,13 +6,13 @@ WWWWWWWWWW                              WWWWWWWWW
      W   WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW    W   W
      W   W                      W     W    W   W
      W   W                      W     W    W   W
-     W   W                      W          W   W
-     W   W                      W
-W    W                          WWWWWWW             
-W    W                                     
-W    WWWWWWWW                WWWWWWW               
-W    W                         W 
-W    W                         W
-W    W                         W                     W  W  W  W  W  W
-W    W                         W
-WWWWWWWWWWWWW                WWWWWWWWWWWWWWW
+     W   W                      W          W   WWWW
+     W   W                      W                 W
+W    W                          WWWWWWW           W 
+W    W                                            W
+W    WWWWWWWW                WWWWWWW              W               
+W    W                         W                  W 
+W    W                         W                  W
+W    W                         W                  W 
+W    W                         W                  W
+WWWWWWWWWWWWWLLLLLLLLLLLLLLLLWWWWWWWBBBBBBBBBBBBBBB

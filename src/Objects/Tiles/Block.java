@@ -57,9 +57,18 @@ public abstract class Block implements Tile{
 		return true;
 	}
 
+	@Override
+	public boolean isLava() {
+		return false;
+	}
 
 	@Override
 	public boolean canStick() {
 		return true;
+	}
+	
+	@Override
+	public boolean isCheckPointer() {
+		return false;
 	}
 }

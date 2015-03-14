@@ -5,8 +5,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import Objects.Tiles.BackToCP;
 import Objects.Tiles.BasicBlock;
 import Objects.Tiles.Block;
+import Objects.Tiles.Lava;
 import Objects.Tiles.Tile;
 
 public class MapReader {
@@ -30,16 +32,21 @@ public class MapReader {
 		try {
 			BR = new BufferedReader(new FileReader(mapFile));
 			String line1 = BR.readLine();
-			
+
 			int i = 0;
 			while (line1 != null) {
 				for (int j = 0; j < line1.length(); j++) {
 					char c = line1.charAt(j);
 					if (c == 'W')
 						tiles.add(new BasicBlock(32 * j, 32 * i));
+					else if (c == 'L')
+						tiles.add(new Lava(32 * j, 32 * i));
+					else if (c == 'B')
+						tiles.add(new BackToCP(32 * j, 32 * i));
+
 				}
 				line1 = BR.readLine();
-				i += 1;				
+				i += 1;
 			}
 
 			BR.close();

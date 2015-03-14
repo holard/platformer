@@ -19,11 +19,11 @@ import Objects.Projectiles.BasicBullet;
 import Objects.Tiles.Tile;
 
 public class MainChar extends Element {
-	
+
 	public static final int TIMER = 15;
 	public static final int MAX_ENERGY = 100;
 	public static final String IMAGE_PATH = "Images/";
-	
+
 	private double dx;
 	private double dy;
 	private int jumps = 0;
@@ -44,7 +44,10 @@ public class MainChar extends Element {
 	private int health;
 	private int maxhealth;
 	private int invince;
-	
+	private int checkX;
+	private int checkY;
+	private Tile lastTile = null;
+
 	public MainChar(Board myb) {
 		setImage(IMAGE_PATH + "craft.png");
 		width = image.getWidth(null);
@@ -52,13 +55,19 @@ public class MainChar extends Element {
 		visible = true;
 		x = Board.GLOBALX_START + 2500;
 		y = Board.GLOBALY_START + 50;
+		checkX = (int) x;
+		checkY = (int) y;
+		System.out.println(checkX);
 		jumps = 0;
 		myBoard = myb;
 		invince = 0;
 		maxhealth = 50;
 		health = 50;
 	}
-
+	public void checkPoint() {
+		checkX = (int)x;
+		checkY = (int)y;
+	}
 	public void setMap(Map newMap) {
 		myMap = newMap;
 	}
@@ -226,7 +235,7 @@ public class MainChar extends Element {
 			}
 		}
 	}
-	
+
 	public void handleJump() {
 		if (lrud[2]) { // pressing the UP arrow
 			if (hang != null) {
@@ -259,7 +268,7 @@ public class MainChar extends Element {
 			lrud[2] = false;
 		}
 	}
-	
+
 	public void handleDoubleTap() {
 		doubletimer -= TIMER;
 		if (doubletimer <= 0) {
@@ -268,7 +277,7 @@ public class MainChar extends Element {
 			keycount = 0;
 		}
 	}
-	
+
 	public void handleStickHang() {
 		if (lrud[3]) {
 			stick = 0;
@@ -293,7 +302,7 @@ public class MainChar extends Element {
 			}
 		}
 	}
-	
+
 	public void handleGravity(boolean[] points, Tile[] tiles) {
 		if (points[6]) {
 			Tile t = tiles[6];
@@ -304,9 +313,11 @@ public class MainChar extends Element {
 			y = t.getPosition().second() - height;
 		}
 	}
+
 	public int getInvince() {
 		return invince;
 	}
+
 	public void handleStickHangCheckers() {
 		if (!myMap.checkWall(getX() + width, getY() + height / 2)
 				&& !myMap.checkWall(getX() - 1, getY() + height / 2))
@@ -324,6 +335,22 @@ public class MainChar extends Element {
 		}
 
 	}
+
+	public void handleLava() {
+		if (myMap.getTileAt((int) (x + width / 2), (int) (y + height / 2)) != null)
+			if (myMap.getTileAt((int) (x + width / 2), (int) (y + height / 2))
+					.isLava()) {
+				if (lastTile != null) {
+					health -= 1;
+					x = lastTile.getX();
+					y = lastTile.getY() - SCALE - 1;
+					dx = 0;
+					dy = 0;
+					invince = 500;
+				}
+			}
+	}
+
 	public void handleEnemyCollisions() {
 		if (invince != 0) {
 			return;
@@ -340,7 +367,29 @@ public class MainChar extends Element {
 		dy = -e.getYKnockBack();
 		invince = 500;
 	}
-	
+
+	public void handleLastTile() {
+		int cx = (int) (x + width / 2);
+		int cy = (int) (y + height);
+		if (myMap.checkWall(cx, cy)) {
+			lastTile = myMap.getWallAt(cx, cy);
+		}
+	}
+
+	public void handleBTCP() {
+		if (myMap.getTileAt((int) (x + width / 2), (int) (y + height / 2)) != null)
+			if (myMap.getTileAt((int) (x + width / 2), (int) (y + height / 2))
+					.isCheckPointer()) {
+				health -= 1;
+				x = checkX;
+				y = checkY;
+				dx = 0;
+				dy = 0;
+				invince = 500;
+
+			}
+	}
+
 	public void move() {
 		handleLR();
 		handleDoubleTap();
@@ -355,7 +404,7 @@ public class MainChar extends Element {
 		boolean[] points = new boolean[8];
 		Tile[] tiles = new Tile[8];
 		epquery(points, tiles, (int) (x + dx), (int) (y + dy), width, height);
-		
+
 		if (dx != 0) {
 			dir = (int) (dx / (Math.abs(dx)));
 		}
@@ -364,7 +413,10 @@ public class MainChar extends Element {
 		handleCeilingCollision(points, tiles);
 		handleGravity(points, tiles);
 		handleStickHangCheckers();
-		
+		handleLastTile();
+		handleLava();
+		handleBTCP();
+
 		x += dx;
 		y += dy;
 		handleEnemyCollisions();
@@ -427,9 +479,9 @@ public class MainChar extends Element {
 			lastkey = key;
 			if (stick == 0)
 				firing = true;
-			
+
 		}
-		
+
 		keycount = 1;
 	}
 
@@ -464,7 +516,8 @@ public class MainChar extends Element {
 		if (key == Board.F) {
 			firing = false;
 			if (myGun.charged()) {
-				myGun.release(getX(), getY(), width, height, dir, myMap, myBoard);
+				myGun.release(getX(), getY(), width, height, dir, myMap,
+						myBoard);
 			}
 		}
 		lastkey = key;
