@@ -64,10 +64,12 @@ public class MainChar extends Element {
 		maxhealth = 50;
 		health = 50;
 	}
+
 	public void checkPoint() {
-		checkX = (int)x;
-		checkY = (int)y;
+		checkX = (int) x;
+		checkY = (int) y;
 	}
+
 	public void setMap(Map newMap) {
 		myMap = newMap;
 	}
@@ -366,6 +368,8 @@ public class MainChar extends Element {
 		}
 		dy = -e.getYKnockBack();
 		invince = 500;
+		hang = null;
+		stick = 0;
 	}
 
 	public void handleLastTile() {

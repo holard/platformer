@@ -127,6 +127,10 @@ public class Board extends JPanel implements ActionListener {
 		readXYChart();
 	}
 
+	public MainChar getMain() {
+		return craft;
+	}
+	
 	/*
 	 * Format for xychart.txt: sample line: <x> <y> <width> <height> <map
 	 * filename> x and y are the map's global position.
