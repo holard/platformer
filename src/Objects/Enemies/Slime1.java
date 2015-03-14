@@ -18,6 +18,9 @@ public class Slime1 extends Enemy {
 		visible = true;
 		dx = -SPEED;
 		dy = 0;
+		damage = 1;
+		xKnockBack = 10;
+		yKnockBack = 4;
 	}
 	
 	public void move() {		

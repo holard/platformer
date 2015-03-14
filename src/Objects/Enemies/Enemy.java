@@ -8,14 +8,25 @@ import Objects.Projectiles.Projectile;
 public abstract class Enemy extends Element {
 	protected int health;
 	public static final String IMAGE_PATH = "Images/Enemies/";
-	
+	protected int damage;
+	protected int xKnockBack;
+	protected int yKnockBack;
 	public void initEnemy(double x, double y, Map M, Board B) {
 		this.x = x;
 		this.y = y;
 		myMap = M;
 		myBoard = B;
 	}
+	public int getDamage() {
+		return damage;
+	}
 	
+	public int getXKnockBack() {
+		return xKnockBack;
+	}
+	public int getYKnockBack() {
+		return yKnockBack;
+	}
 	public void setHealth(int newHealth) {
 		health = newHealth;
 	}

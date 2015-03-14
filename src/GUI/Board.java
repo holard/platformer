@@ -45,11 +45,12 @@ public class Board extends JPanel implements ActionListener {
 	public static int F = KeyEvent.VK_F;
 	public static int G = KeyEvent.VK_G;
 	public static int P = KeyEvent.VK_P;
-
+	public static final int HEALTH_PER_HEART = 10;
 	public static final int GLOBALX_START = 0;
 	public static final int GLOBALY_START = 0;
 	public static final String MAPPATH = "Maps/";
 	public static final String START_MAPFILE = MAPPATH + "map1";
+	public static final int INVINCIBILITY_FLASH_RATE = 50;
 
 	private MainChar craft;
 	private ArrayList<Tile> blocks;
@@ -74,7 +75,7 @@ public class Board extends JPanel implements ActionListener {
 	public int toConf = -1;
 	Item confirmStore = null;
 	private MenusHandler mh;
-	
+
 	public Board() {
 		addKeyListener(new TAdapter());
 		setFocusable(true);
@@ -111,7 +112,7 @@ public class Board extends JPanel implements ActionListener {
 		storage = new ArrayList<Item>();
 		gamepages.add(new MenuPage(pausepage, "Pause"));
 		gamepages.add(new EquipPage());
-		gamepages.add(new MenuPage(new ArrayList<Button>(),"Quests"));
+		gamepages.add(new MenuPage(new ArrayList<Button>(), "Quests"));
 		menupages.add(mainMenu);
 		menupages.add(credits);
 		menupages.add(confPage);
@@ -237,18 +238,37 @@ public class Board extends JPanel implements ActionListener {
 		}
 	}
 
-	
 	public void handleGunBar(Graphics2D g2d) {
 		if (craft.isVisible()) {
 			g2d.setColor(Color.WHITE);
 			g2d.drawRect(40, 40, 102, 12);
 			g2d.setColor(Color.LIGHT_GRAY);
 			double rat = craft.getMyGun().reloadRatio();
-			
-			g2d.fillRect(41, 41, (int)(100*rat), 10);
+
+			g2d.fillRect(41, 41, (int) (100 * rat), 10);
 			if (craft.getMyGun().charged() && rat >= 1) {
 				g2d.setColor(Color.BLUE);
-				g2d.fillRect(41, 41, (int)(100*craft.getMyGun().chargeRatio()),10);
+				g2d.fillRect(41, 41, (int) (100 * craft.getMyGun()
+						.chargeRatio()), 10);
+			}
+		}
+	}
+
+	public void handleHealthBar(Graphics2D g2d) {
+		if (craft.isVisible()) {
+			g2d.setColor(Color.PINK);
+			
+			for (int i = 0; i < craft.getHealth() / HEALTH_PER_HEART; i++) {
+				g2d.fillRect(40 + 16 * i, 20, 16, 16);
+			}
+			g2d.fillRect(
+					40 + 16 * (int)(craft.getHealth() / HEALTH_PER_HEART),
+					20,
+					(int) ((double)(16 / (double)HEALTH_PER_HEART) * (craft.getHealth() % HEALTH_PER_HEART)),
+					16);
+			g2d.setColor(Color.RED);
+			for (int i = 0; i < craft.getMaxhealth() / HEALTH_PER_HEART; i++) {
+				g2d.drawRect(40 + 16 * i, 20, 16, 16);
 			}
 		}
 	}
@@ -261,7 +281,7 @@ public class Board extends JPanel implements ActionListener {
 			if (menu <= 0) {
 				updateCam();
 
-				if (craft.isVisible()) {
+				if (craft.isVisible() && (craft.getInvince() / INVINCIBILITY_FLASH_RATE) % 2 == 0) {
 					g2d.drawImage(craft.getImage(), craft.getX() - camx,
 							craft.getY() - camy, this);
 					if (craft.getMyGun() != null) {
@@ -292,8 +312,9 @@ public class Board extends JPanel implements ActionListener {
 						g2d.drawImage(e.getImage(), e.getX() - camx, e.getY()
 								- camy, this);
 				}
-				
+
 				handleGunBar(g2d);
+				handleHealthBar(g2d);
 			}
 			if (paused) {
 				if (menu == 0) { // Pause page
@@ -486,8 +507,7 @@ public class Board extends JPanel implements ActionListener {
 						if (bIndex > 0) {
 							bIndex -= 1;
 						} else {
-							bIndex = gamepages.get(menu).getButtons()
-									.size() - 1;
+							bIndex = gamepages.get(menu).getButtons().size() - 1;
 						}
 					}
 					if (key == DOWN) {
@@ -505,7 +525,7 @@ public class Board extends JPanel implements ActionListener {
 				}
 			}
 		}
-		
+
 		public void keyPressed(KeyEvent e) {
 			int key = e.getKeyCode();
 			if (!ingame) {

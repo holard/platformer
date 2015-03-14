@@ -5,11 +5,13 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
 import GUI.Board;
 import GUI.Map;
+import Objects.Enemies.Enemy;
 import Objects.Items.Gun;
 import Objects.Items.Item;
 import Objects.Items.gun1;
@@ -39,6 +41,9 @@ public class MainChar extends Element {
 	private boolean hung = false;
 	private Gun myGun;
 	private boolean firing = false;
+	private int health;
+	private int maxhealth;
+	private int invince;
 	
 	public MainChar(Board myb) {
 		setImage(IMAGE_PATH + "craft.png");
@@ -49,6 +54,9 @@ public class MainChar extends Element {
 		y = Board.GLOBALY_START + 50;
 		jumps = 0;
 		myBoard = myb;
+		invince = 0;
+		maxhealth = 50;
+		health = 50;
 	}
 
 	public void setMap(Map newMap) {
@@ -296,7 +304,9 @@ public class MainChar extends Element {
 			y = t.getPosition().second() - height;
 		}
 	}
-	
+	public int getInvince() {
+		return invince;
+	}
 	public void handleStickHangCheckers() {
 		if (!myMap.checkWall(getX() + width, getY() + height / 2)
 				&& !myMap.checkWall(getX() - 1, getY() + height / 2))
@@ -314,12 +324,34 @@ public class MainChar extends Element {
 		}
 
 	}
+	public void handleEnemyCollisions() {
+		if (invince != 0) {
+			return;
+		}
+		Enemy e = enemyCollide();
+		if (e == null)
+			return;
+		health -= e.getDamage();
+		if (e.getX() > getX()) {
+			dx = -e.getXKnockBack();
+		} else {
+			dx = e.getXKnockBack();
+		}
+		dy = -e.getYKnockBack();
+		invince = 500;
+	}
+	
 	public void move() {
 		handleLR();
 		handleDoubleTap();
 		handleJump();
 		handleStickHang();
-
+		if (invince > 0) {
+			invince -= TIMER;
+		}
+		if (invince < 0) {
+			invince = 0;
+		}
 		boolean[] points = new boolean[8];
 		Tile[] tiles = new Tile[8];
 		epquery(points, tiles, (int) (x + dx), (int) (y + dy), width, height);
@@ -335,6 +367,7 @@ public class MainChar extends Element {
 		
 		x += dx;
 		y += dy;
+		handleEnemyCollisions();
 		if (firing) {
 			fireBasic();
 		}
@@ -394,8 +427,9 @@ public class MainChar extends Element {
 			lastkey = key;
 			if (stick == 0)
 				firing = true;
+			
 		}
-
+		
 		keycount = 1;
 	}
 
@@ -443,5 +477,21 @@ public class MainChar extends Element {
 
 	public void setMyGun(Gun myGun) {
 		this.myGun = myGun;
+	}
+
+	public int getHealth() {
+		return health;
+	}
+
+	public void setHealth(int health) {
+		this.health = health;
+	}
+
+	public int getMaxhealth() {
+		return maxhealth;
+	}
+
+	public void setMaxhealth(int maxhealth) {
+		this.maxhealth = maxhealth;
 	}
 }
