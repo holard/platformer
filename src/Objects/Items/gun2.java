@@ -28,6 +28,7 @@ public class gun2 extends Gun {
 		image = ii.getImage();
 		xOffset = 0;
 		yOffset = 8;
+		init();
 	}
 	
 	@Override

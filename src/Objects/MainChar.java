@@ -270,6 +270,7 @@ public class MainChar extends Element {
 			if (dy > 0.1 * TIMER)
 				dy = 0.1 * TIMER;
 			firing = false;
+			myGun.dud();
 		}
 		if (!myMap.checkWall(getX(), getY() + height)
 				&& dy < TIMER - Math.abs(stick * 0.9 * TIMER)) {
@@ -277,6 +278,7 @@ public class MainChar extends Element {
 				dy += TIMER * 0.05;
 		}
 		if (hang != null) {
+			myGun.dud();
 			if (getY() <= hang.getPosition().second() - 32
 					&& Math.abs(hang.getPosition().first() - getX()) < SCALE) {
 				hang = null;
@@ -427,12 +429,15 @@ public class MainChar extends Element {
 		}
 		if (key == Board.F) {
 			firing = false;
+			if (myGun.charged()) {
+				myGun.release(getX(), getY(), width, height, dir, myMap, myBoard);
+			}
 		}
 		lastkey = key;
 		keycount = 2;
 	}
 
-	public Item getMyGun() {
+	public Gun getMyGun() {
 		return myGun;
 	}
 

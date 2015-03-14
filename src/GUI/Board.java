@@ -66,15 +66,15 @@ public class Board extends JPanel implements ActionListener {
 	private int globalx;
 	private int globaly;
 	public boolean paused = false;
-	private int menu = 0;
-	private ArrayList<Page> menupages;
-	private ArrayList<Page> gamepages;
-	private ArrayList<Item> storage;
-	private int bIndex;
-	private int toConf = -1;
-	private Gun currGun;
-	private Item confirmStore = null;
-
+	public int menu = 0;
+	public ArrayList<Page> menupages;
+	public ArrayList<Page> gamepages;
+	public ArrayList<Item> storage;
+	public int bIndex;
+	public int toConf = -1;
+	Item confirmStore = null;
+	private MenusHandler mh;
+	
 	public Board() {
 		addKeyListener(new TAdapter());
 		setFocusable(true);
@@ -88,23 +88,17 @@ public class Board extends JPanel implements ActionListener {
 		camy = 0;
 		camw = MainMethod.WIDTH;
 		camh = MainMethod.HEIGHT;
-		currGun = new gun1();
 		initGame();
 		bIndex = 0;
 		timer = new Timer(TIMER, this);
 		timer.start();
 		myGuns = new ArrayList<Gun>();
-
-		myGuns.add(new gun1());
+		mh = new MenusHandler(this);
+		myGuns.add(new bubbleBombLauncher());
 		myGuns.add(new bubblegun());
 		myGuns.add(new gun2());
 		ArrayList<Button> mmButtons = new ArrayList<Button>();
 
-		/*
-		 * g2d.drawString("MAIN MENU", 150, 100); g2d.drawString("START GAME",
-		 * 150, 200); g2d.drawString("CREDITS", 150, 300); g2d.drawString(">",
-		 * cursX, cursY);
-		 */
 		mmButtons.add(new MenuButton(150, 200, -1, "START GAME", 64));
 		mmButtons.add(new MenuButton(150, 280, 1, "CREDITS", 64));
 		mmButtons.add(new MenuButton(150, 360, 2, "CONFIGURE", 64));
@@ -115,8 +109,9 @@ public class Board extends JPanel implements ActionListener {
 		ConfigurePage confPage = new ConfigurePage();
 		ArrayList<Button> pausepage = new ArrayList<Button>();
 		storage = new ArrayList<Item>();
-		gamepages.add(new MenuPage(pausepage, "PAUSED"));
+		gamepages.add(new MenuPage(pausepage, "Pause"));
 		gamepages.add(new EquipPage());
+		gamepages.add(new MenuPage(new ArrayList<Button>(),"Quests"));
 		menupages.add(mainMenu);
 		menupages.add(credits);
 		menupages.add(confPage);
@@ -124,7 +119,7 @@ public class Board extends JPanel implements ActionListener {
 
 	public void initGame() {
 		craft = new MainChar(this);
-		craft.setMyGun(currGun);
+		craft.setMyGun(new gun1());
 		setMap(START_MAPFILE);
 		globalx = GLOBALX_START;
 		globaly = GLOBALY_START;
@@ -242,103 +237,18 @@ public class Board extends JPanel implements ActionListener {
 		}
 	}
 
-	public void handleEquipPage(Graphics2D g2d) {
-		g2d.setFont(new Font("SERIF", 0, 20));
-
-		g2d.setColor(Color.WHITE);
-
-		EquipPage ep = (EquipPage) gamepages.get(1);
-		ArrayList<Button> curButtons = ep.getButtons();
-		g2d.drawImage(ep.getCurrent().getImage(), 60, 40, this);
-		g2d.drawString(ep.getCurrent().getName(), 160, 40);
-		g2d.drawString(ep.getCurrent().getDescription(), 160, 80);
-		g2d.drawString("press [" + KeyEvent.getKeyText(F) + "] to equip, and ["
-				+ KeyEvent.getKeyText(G) + "] to store.", 300, 200);
-		if (confirmStore != null) {
-			g2d.drawString(
-					"Store " + confirmStore.getName() + "? Yes["
-							+ KeyEvent.getKeyText(F) + "] / No["
-							+ KeyEvent.getKeyText(G) + "]", 300, 300);
-		}
-		g2d.setColor(Color.YELLOW);
-		g2d.drawString(ep.getButtons().size() + "/" + GUN_INV_SIZE, 500, 40);
-		g2d.setColor(Color.CYAN);
-
-		for (int i = 0; i < curButtons.size(); i++) {
-			ItemButton ib = (ItemButton) (curButtons.get(i));
-			g2d.drawImage(ib.getItem().getImage(), ib.getX(), ib.getY(), this);
-			if (i == bIndex) {
-				g2d.drawRect(ib.getX() - 3, ib.getY() - 3, ib.getItem()
-						.getImage().getWidth(null) + 6, ib.getItem().getImage()
-						.getHeight(null) + 6);
-				g2d.drawString(ib.getItem().getName(), ib.getX() + 48,
-						ib.getY() + 20);
-			}
-		}
-	}
-
-	public void handlePausePage(Graphics2D g2d) {
-		g2d.setFont(new Font("SERIF", 0, 100));
-		g2d.setColor(Color.WHITE);
-		g2d.drawString("PAUSED [" + KeyEvent.getKeyText(P) + "]", 128, 200);
-		g2d.setFont(new Font("SERIF", 0, 50));
-		g2d.drawString("[" + KeyEvent.getKeyText(F) + "] for restart", 128, 320);
-		g2d.drawString("[" + KeyEvent.getKeyText(G) + "] to menu", 128, 380);
-	}
-
-	public void handleMenus(Graphics2D g2d) {
-		if (menu == -1) {
-			return;
-		}
-		g2d.setColor(Color.WHITE);
-		Page curMenu = menupages.get(menu);
-		ArrayList<Button> curButtons = curMenu.getButtons();
-		g2d.setFont(new Font("SERIF", 0, curMenu.gettSize()));
-		g2d.drawString(curMenu.getTitle(), 60, 100);
-		for (int i = 0; i < curButtons.size(); i++) {
+	
+	public void handleGunBar(Graphics2D g2d) {
+		if (craft.isVisible()) {
 			g2d.setColor(Color.WHITE);
-			Button b = curButtons.get(i);
-			g2d.setFont(new Font("SERIF", 0, b.getSize()));
-			String toDraw = b.getName();
-			int offset = 0;
-			if (i == bIndex) {
-				toDraw = ">" + toDraw;
-				offset = -b.getSize() / 2;
-			}
-			if (menu != 2) {
-				g2d.drawString(toDraw, b.getX() + offset, b.getY());
-			} else {
-				if (b.getDestination() != -1) {
-					int wut = b.getDestination();
-					String toAdd = "";
-					switch (wut) {
-					case 0:
-						toAdd = KeyEvent.getKeyText(LEFT);
-						break;
-					case 1:
-						toAdd = KeyEvent.getKeyText(RIGHT);
-						break;
-					case 2:
-						toAdd = KeyEvent.getKeyText(UP);
-						break;
-					case 3:
-						toAdd = KeyEvent.getKeyText(DOWN);
-						break;
-					case 4:
-						toAdd = KeyEvent.getKeyText(F);
-						break;
-					case 5:
-						toAdd = KeyEvent.getKeyText(G);
-						break;
-					case 6:
-						toAdd = KeyEvent.getKeyText(P);
-						break;
-					}
-					toDraw = toDraw + "[" + toAdd + "]";
-					if (toConf != -1 && toDraw.charAt(0) == '>')
-						g2d.setColor(Color.CYAN);
-				}
-				g2d.drawString(toDraw, b.getX() + offset, b.getY());
+			g2d.drawRect(40, 40, 102, 12);
+			g2d.setColor(Color.LIGHT_GRAY);
+			double rat = craft.getMyGun().reloadRatio();
+			
+			g2d.fillRect(41, 41, (int)(100*rat), 10);
+			if (craft.getMyGun().charged() && rat >= 1) {
+				g2d.setColor(Color.BLUE);
+				g2d.fillRect(41, 41, (int)(100*craft.getMyGun().chargeRatio()),10);
 			}
 		}
 	}
@@ -354,8 +264,8 @@ public class Board extends JPanel implements ActionListener {
 				if (craft.isVisible()) {
 					g2d.drawImage(craft.getImage(), craft.getX() - camx,
 							craft.getY() - camy, this);
-					if (currGun != null) {
-						Item i = currGun;
+					if (craft.getMyGun() != null) {
+						Item i = craft.getMyGun();
 						g2d.drawImage(i.getImage(), craft.getX() - camx
 								+ i.xOffset, craft.getY() - camy + i.yOffset,
 								this);
@@ -382,22 +292,23 @@ public class Board extends JPanel implements ActionListener {
 						g2d.drawImage(e.getImage(), e.getX() - camx, e.getY()
 								- camy, this);
 				}
+				
+				handleGunBar(g2d);
 			}
 			if (paused) {
-				Page curPage = gamepages.get(menu);
-
 				if (menu == 0) { // Pause page
-					handlePausePage(g2d);
+					mh.handlePausePage(g2d);
 				}
 
 				if (menu == 1) { // equip page
-					handleEquipPage(g2d);
+					mh.handleEquipPage(g2d);
 				}
+				mh.handleIGBar(g2d);
 
 			}
 			g2d.setColor(Color.WHITE);
 		} else {
-			handleMenus(g2d);
+			mh.handleMenus(g2d);
 		}
 
 		Toolkit.getDefaultToolkit().sync();
@@ -500,7 +411,7 @@ public class Board extends JPanel implements ActionListener {
 			if (menu == 1) {
 				EquipPage ep = (EquipPage) gamepages.get(1);
 				ArrayList<Item> temp = new ArrayList<Item>(myGuns);
-				ep.setItems(currGun, temp);
+				ep.setItems(craft.getMyGun(), temp);
 			}
 		}
 
@@ -509,9 +420,8 @@ public class Board extends JPanel implements ActionListener {
 				if (key == F) {
 					if (myGuns.size() > 0) {
 						Gun n = myGuns.remove(bIndex);
-						myGuns.add(currGun);
+						myGuns.add(craft.getMyGun());
 						craft.setMyGun(n);
-						currGun = n;
 						initEquips();
 					}
 
@@ -591,17 +501,6 @@ public class Board extends JPanel implements ActionListener {
 					}
 					if (menu == 1) { // EQUIP PAGE
 						handleEquipPage(key);
-					}
-				} else { // main pause page
-					if (key == F) {
-						initGame();
-						menu = -1;
-						paused = false;
-					} else if (key == G) {
-						initGame();
-						menu = 0;
-						ingame = false;
-						paused = false;
 					}
 				}
 			}

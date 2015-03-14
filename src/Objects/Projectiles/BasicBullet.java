@@ -31,4 +31,9 @@ public class BasicBullet extends Projectile {
 		else
 			super.move();
 	}
+	
+	@Override
+	public void death() {
+		
+	}
 }

@@ -11,50 +11,53 @@ import javax.swing.ImageIcon;
 import GUI.Board;
 import GUI.Map;
 import Objects.Projectiles.BasicBullet;
+import Objects.Projectiles.BubbleBomb;
 import Objects.Projectiles.BubbleProj;
 import Objects.Projectiles.Projectile;
 
-public class bubblegun extends Gun {
-	private String name = "BubbleGun";
-	private String description = "Shoots bubbles. What did you expect?";
-	
-	public bubblegun() {
-		reloadRate = 1;
+public class bubbleBombLauncher extends Gun {
+	private String name = "BubbleBomber";
+	private String description = "Blows big, bursting, bubble bombs";
+	private double charge;
+	private static final int MAX_CHARGE = 11;
+
+	public bubbleBombLauncher() {
+		reloadRate = 1500;
 		loaded = true;
 		ImageIcon ii = null;
 		try {
-			ii = new ImageIcon((new File(IMAGE_PATH + "gun2.png")).toURI().toURL());
+			ii = new ImageIcon((new File(IMAGE_PATH + "gun1.png")).toURI()
+					.toURL());
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 		image = ii.getImage();
 		xOffset = 0;
 		yOffset = 8;
+		charge = 0;
 		init();
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
 	}
 
 	@Override
-	public String getDescription() {
-		return description;
-	}
-
-	@Override
-	public boolean isFireable() {
+	public boolean charged() {
 		return true;
 	}
-
 	@Override
-	public void fire(int x, int y, int width, int height, int dir, Map m, Board b) {
-		if (!loaded) {
+	public void dud() {
+		
+		charge = 0;
+	}
+	@Override
+	public void release(int x, int y, int width, int height, int dir, Map m, Board b) {
+		if (!loaded || charge == 0)
 			return;
-		}
-		int bullet_dx = 3 * dir;
-		int bullet_dy = 0;
+		int bullet_dx = (int)(charge+5) * dir;
+		int bullet_dy = -(int)(charge+4);
 		int bullet_x, bullet_y;
 
 		BubbleProj bullet = new BubbleProj(0, 0, bullet_dx, bullet_dy, m,
@@ -68,18 +71,43 @@ public class bubblegun extends Gun {
 			bullet_x = x - b_width;
 			bullet_y = y + height / 2 - b_height / 2;
 		}
-		Random r = new Random();
-		for (int i = 0; i < 3; i++)
 		b.getProjectiles().add(
-				new BubbleProj(bullet_x, bullet_y, bullet_dx, bullet_dy-(int)(5*r.nextDouble()),
+				new BubbleBomb(bullet_x, bullet_y-6, bullet_dx, bullet_dy,
 						m, b));
 		
 		super.fire();
+		charge = 0;
+
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public boolean isFireable() {
+		return true;
+	}
+
+	@Override
+	public void fire(int x, int y, int width, int height, int dir, Map m,
+			Board b) {
+		if (!loaded) {
+			return;
+		}
+		if (charge < MAX_CHARGE)
+		charge += 0.15;
 	}
 
 	@Override
 	public Image getImage() {
 		return image;
+	}
+	
+	@Override
+	public double chargeRatio() {
+		return charge/MAX_CHARGE;
 	}
 
 	@Override

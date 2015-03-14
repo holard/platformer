@@ -31,13 +31,15 @@ public abstract class Projectile extends Element {
 
 		if (timer == 0 || outOfBounds()) {
 			myBoard.getProjectiles().remove(this);
+			if (timer == 0)
+				death();
 		}
 
 		Enemy e = enemyCollide();
 		if (e != null) {
 			e.hit(this);
 			if (damage != 0) {
-				timer = 2;
+				timer = (int)(40/(Math.abs(dx)+dy));
 			}
 			damage = 0;
 
@@ -46,6 +48,10 @@ public abstract class Projectile extends Element {
 
 	public int getDamage() {
 		return damage;
+	}
+
+	public void death() {
+
 	}
 
 }
