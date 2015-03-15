@@ -61,7 +61,9 @@ public class MainChar extends Element {
 	public void setMap(Map newMap) {
 		myMap = newMap;
 	}
-
+	public int getDirection() {
+		return dir;
+	}
 	public void releaseAll() {
 		lrud = new boolean[4];
 		lrud2 = new boolean[4];
@@ -359,6 +361,7 @@ public class MainChar extends Element {
 		int cx = (int) (x + width / 2);
 		int cy = (int) (y + height);
 		if (myMap.checkWall(cx, cy)) {
+			if (myMap.getTileAt(cx,cy-SCALE) == null || !myMap.getTileAt(cx,cy-SCALE).isLava() )
 			lastTile = myMap.getWallAt(cx, cy);
 		}
 	}

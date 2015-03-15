@@ -1,5 +1,7 @@
 package Objects.Enemies;
 
+import java.util.Random;
+
 import GUI.Map;
 import Objects.Element;
 import Objects.MainChar;
@@ -11,11 +13,12 @@ public class AggressiveLeapAI implements AI {
 	boolean grounded = false;
 	private double xrange;
 	private double yrange;
-
+	private Random rand;
 	public AggressiveLeapAI(int sp, double range, double range2) {
 		jump_spacing = sp;
 		xrange = range;
 		yrange = range2;
+		rand = new Random();
 	}
 
 	@Override
@@ -63,7 +66,7 @@ public class AggressiveLeapAI implements AI {
 			}
 			y = t.getY() - me.getHeight();
 			if (!grounded && dy >= 0) {
-				timer = jump_spacing;
+				timer = (int)((double)jump_spacing * (0.8 + rand.nextDouble()*0.4));
 			}
 			grounded = true;
 		}

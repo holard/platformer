@@ -35,7 +35,10 @@ public class Board extends JPanel implements ActionListener {
 	public static final int CAM_VB = 160;
 	public static final int TIMER = 15;
 	public static int GUN_INV_SIZE = 3;
-	
+	public static int IG_PAUSE = 0;
+	public static int IG_EQUIP = 1;
+	public static int IG_QUEST = 2;
+	public static int IG_CONTROLS = 3;
 	public static int UP = KeyEvent.VK_UP;
 	public static int LEFT = KeyEvent.VK_LEFT;
 	public static int RIGHT = KeyEvent.VK_RIGHT;
@@ -43,7 +46,7 @@ public class Board extends JPanel implements ActionListener {
 	public static int F = KeyEvent.VK_F;
 	public static int G = KeyEvent.VK_G;
 	public static int P = KeyEvent.VK_P;
-	
+
 	public static final int HEALTH_PER_HEART = 10;
 	public static final int GLOBALX_START = 0;
 	public static final int GLOBALY_START = 0;
@@ -70,7 +73,7 @@ public class Board extends JPanel implements ActionListener {
 	public ArrayList<Page> menupages;
 	public ArrayList<Page> gamepages;
 	public ArrayList<Item> storage;
-	public int bIndex; //index of button currently selected
+	public int bIndex; // index of button currently selected
 	public int toConf = -1;
 	Item confirmStore = null;
 	private MenusHandler mh;
@@ -81,17 +84,17 @@ public class Board extends JPanel implements ActionListener {
 		setBackground(Color.BLACK);
 		setDoubleBuffered(true);
 		ingame = false;
-		setSize(400, 300);		
+		setSize(400, 300);
 		camx = 0;
 		camy = 0;
 		camw = MainMethod.WIDTH;
 		camh = MainMethod.HEIGHT;
-		
+
 		initGame();
 		initMenus();
-		
+
 		timer = new Timer(TIMER, this);
-		timer.start();	
+		timer.start();
 	}
 
 	public void initGame() {
@@ -101,18 +104,18 @@ public class Board extends JPanel implements ActionListener {
 		globalx = GLOBALX_START;
 		globaly = GLOBALY_START;
 		readXYChart();
-		
+
 		myGuns = new ArrayList<Gun>();
 		mh = new MenusHandler(this);
 		myGuns.add(new BubbleBombLauncher());
 		myGuns.add(new BubbleGun());
 		myGuns.add(new DoubleGun());
 	}
-	
+
 	public void initMenus() {
 		menupages = new ArrayList<Page>();
 		gamepages = new ArrayList<Page>();
-		
+
 		ArrayList<Button> mmButtons = new ArrayList<Button>();
 		mmButtons.add(new MenuButton(150, 200, -1, "START GAME", 64));
 		mmButtons.add(new MenuButton(150, 280, 1, "CREDITS", 64));
@@ -123,17 +126,19 @@ public class Board extends JPanel implements ActionListener {
 		MenuPage credits = new MenuPage(crButtons, "CREDITS: Poop.");
 		ConfigurePage confPage = new ConfigurePage();
 		ArrayList<Button> pausepage = new ArrayList<Button>();
+		MenuPage controls = mh.initControls();
 		storage = new ArrayList<Item>();
 		gamepages.add(new MenuPage(pausepage, "Pause"));
 		gamepages.add(new EquipPage());
 		gamepages.add(new MenuPage(new ArrayList<Button>(), "Quests"));
+		gamepages.add(controls);
 		menupages.add(mainMenu);
 		menupages.add(credits);
 		menupages.add(confPage);
-		
+
 		bIndex = 0;
 	}
-	
+
 	/*
 	 * Format for xychart.txt: sample line: <x> <y> <width> <height> <map
 	 * filename> x and y are the map's global position.
@@ -216,7 +221,7 @@ public class Board extends JPanel implements ActionListener {
 		enemies = OR.makeEnemies();
 		projectiles = new ArrayList<Projectile>(40000);
 	}
-	
+
 	// Returns enemy at x and y, if none return null
 	public Enemy checkEnemy(double x, double y) {
 		for (int i = 0; i < enemies.size(); i++) {
@@ -265,15 +270,14 @@ public class Board extends JPanel implements ActionListener {
 	public void handleHealthBar(Graphics2D g2d) {
 		if (craft.isVisible()) {
 			g2d.setColor(Color.PINK);
-			
+
 			for (int i = 0; i < craft.getHealth() / HEALTH_PER_HEART; i++) {
 				g2d.fillRect(40 + 16 * i, 20, 16, 16);
 			}
 			g2d.fillRect(
-					40 + 16 * (int)(craft.getHealth() / HEALTH_PER_HEART),
-					20,
-					(int) ((double)(16 / (double)HEALTH_PER_HEART) * (craft.getHealth() % HEALTH_PER_HEART)),
-					16);
+					40 + 16 * (int) (craft.getHealth() / HEALTH_PER_HEART), 20,
+					(int) ((double) (16 / (double) HEALTH_PER_HEART) * (craft
+							.getHealth() % HEALTH_PER_HEART)), 16);
 			g2d.setColor(Color.RED);
 			for (int i = 0; i < craft.getMaxhealth() / HEALTH_PER_HEART; i++) {
 				g2d.drawRect(40 + 16 * i, 20, 16, 16);
@@ -289,10 +293,12 @@ public class Board extends JPanel implements ActionListener {
 			if (menu <= 0) {
 				updateCam();
 
-				if (craft.isVisible() && (craft.getInvince() / INVINCIBILITY_FLASH_RATE) % 4 != 1) {
+				if (craft.isVisible()
+						&& (craft.getInvince() / INVINCIBILITY_FLASH_RATE) % 4 != 1) {
 					g2d.drawImage(craft.getImage(), craft.getX() - camx,
 							craft.getY() - camy, this);
-					if (craft.getMyGun() != null && craft.getStick() == 0 && craft.getHang() == null) {
+					if (craft.getMyGun() != null && craft.getStick() == 0
+							&& craft.getHang() == null) {
 						Item i = craft.getMyGun();
 						g2d.drawImage(i.getImage(), craft.getX() - camx
 								+ i.xOffset, craft.getY() - camy + i.yOffset,
@@ -319,20 +325,29 @@ public class Board extends JPanel implements ActionListener {
 					if (e.isVisible())
 						g2d.drawImage(e.getImage(), e.getX() - camx, e.getY()
 								- camy, this);
-						e.drawHealth(g2d,camx,camy);
+					e.drawHealth(g2d, camx, camy);
 				}
 
 				handleGunBar(g2d);
 				handleHealthBar(g2d);
 			}
 			if (paused) {
-				if (menu == 0) { // Pause page
+				if (menu == IG_PAUSE) { // Pause page
 					mh.handlePausePage(g2d);
 				}
 
-				if (menu == 1) { // equip page
+				if (menu == IG_EQUIP) { // equip page
 					mh.handleEquipPage(g2d);
 				}
+
+				if (menu == IG_QUEST) { // quest page
+
+				}
+
+				if (menu == IG_CONTROLS) { // controls page
+					mh.handleControlsPage(g2d);
+				}
+				
 				mh.handleIGBar(g2d);
 
 			}
@@ -366,7 +381,7 @@ public class Board extends JPanel implements ActionListener {
 		}
 		repaint();
 	}
-	
+
 	public void handleConfig(int key) {
 		if (toConf == -1) {
 			if (key == UP) {
@@ -377,8 +392,7 @@ public class Board extends JPanel implements ActionListener {
 				}
 			}
 			if (key == DOWN) {
-				ArrayList<Button> curButtons = menupages.get(menu)
-						.getButtons();
+				ArrayList<Button> curButtons = menupages.get(menu).getButtons();
 				if (bIndex < curButtons.size() - 1) {
 					bIndex += 1;
 				} else {
@@ -439,6 +453,13 @@ public class Board extends JPanel implements ActionListener {
 					craft.getMyGun().setImage(craft.getMyGun().getRightImage());
 					myGuns.add(craft.getMyGun());
 					craft.setMyGun(n);
+					if (craft.getDirection() == 1)
+						craft.getMyGun().setImage(
+								craft.getMyGun().getRightImage());
+					else
+						craft.getMyGun().setImage(
+								craft.getMyGun().getLeftImage());
+
 					initEquips();
 				}
 
@@ -521,7 +542,7 @@ public class Board extends JPanel implements ActionListener {
 			}
 		}
 	}
-	
+
 	public ArrayList<Projectile> getProjectiles() {
 		return projectiles;
 	}
@@ -529,7 +550,7 @@ public class Board extends JPanel implements ActionListener {
 	public ArrayList<Enemy> getEnemies() {
 		return enemies;
 	}
-	
+
 	public MainChar getMain() {
 		return craft;
 	}

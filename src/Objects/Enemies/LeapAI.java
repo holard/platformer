@@ -1,5 +1,7 @@
 package Objects.Enemies;
 
+import java.util.Random;
+
 import GUI.Map;
 import Objects.Element;
 import Objects.MainChar;
@@ -9,8 +11,10 @@ public class LeapAI implements AI{
 	private int timer = 0;
 	private int jump_spacing;
 	boolean grounded = false;
+	Random rand;
 	public LeapAI(int sp) {
 		jump_spacing = sp;
+		rand = new Random();
 	}
 	@Override
 	public double[] move(double ox, double oy, double odx, double ody, Map myMap,
@@ -40,7 +44,7 @@ public class LeapAI implements AI{
 			}
 			y = t.getY() - me.getHeight();
 			if (!grounded && dy >= 0) {
-				timer = jump_spacing;
+				timer = (int)((double)jump_spacing * (0.8 + rand.nextDouble()*0.4));
 			}
 			grounded = true;
 		}

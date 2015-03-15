@@ -10,7 +10,7 @@ W    WWW                     WWWWWWWWWWWWWWWWWWWWWW     WW              WW    WW
 W                            WWWW                       WWLLLLLLLLLLLLLLWW    WW
 W           WW    WW       WWWWWW                       WWLLLLLLLLLLLLLLWW    WW
 W           WW    WW       WWWWWW     WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW    WW
-W           WWLLLLWWLLLLLLLWWWWWW                                      WWW    WW
+W           WW    WWLLLLLLLWWWWWW                                      WWW    WW
 W           WWLLLLWWLLLLLLLWWWWWW                                      WWW    WW
 W       WWWWWWWWWWWWWWWWWWWWWWWWW                   W                         WW
 W       WWWWWWWWWWWWWWWWWWWWWWWWW                   W                         WW

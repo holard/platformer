@@ -64,7 +64,7 @@ public class BubbleBombLauncher extends Gun {
 		int bullet_dy = -(int)(charge+4);
 		int bullet_x, bullet_y;
 
-		BubbleProj bullet = new BubbleProj(0, 0, bullet_dx, bullet_dy, m,
+		BubbleBomb bullet = new BubbleBomb(0, 0, bullet_dx, bullet_dy, m,
 				b);
 		int b_width = bullet.getWidth();
 		int b_height = bullet.getHeight();
@@ -76,7 +76,7 @@ public class BubbleBombLauncher extends Gun {
 			bullet_y = y + height / 2 - b_height / 2;
 		}
 		b.getProjectiles().add(
-				new BubbleBomb(bullet_x, bullet_y-6, bullet_dx, bullet_dy,
+				new BubbleBomb(bullet_x, bullet_y-8, bullet_dx, bullet_dy,
 						m, b));
 		
 		super.fire();
