@@ -22,7 +22,7 @@ public class Slime1 extends Enemy {
 		xKnockBack = 10;
 		yKnockBack = 4;
 		
-		myAI = new leapAI(1000);
+		myAI = new LeapAI(1000);
 	}
 	
 }

@@ -4,7 +4,7 @@ import GUI.Map;
 import Objects.Element;
 import Objects.Tiles.Tile;
 
-public class platformGuardAI implements AI {
+public class PlatformGuardAI implements AI {
 
 	@Override
 	public double[] move(double ox, double oy, double odx, double ody,

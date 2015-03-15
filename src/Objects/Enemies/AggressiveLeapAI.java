@@ -5,10 +5,15 @@ import Objects.Element;
 import Objects.MainChar;
 import Objects.Tiles.Tile;
 
-public class aggressivePlatformAI implements AI {
+public class AggressiveLeapAI implements AI {
+	private int timer = 0;
+	private int jump_spacing;
+	boolean grounded = false;
 	private double xrange;
 	private double yrange;
-	public aggressivePlatformAI(double range, double range2) {
+
+	public AggressiveLeapAI(int sp, double range, double range2) {
+		jump_spacing = sp;
 		xrange = range;
 		yrange = range2;
 	}
@@ -20,14 +25,16 @@ public class aggressivePlatformAI implements AI {
 		double y = oy;
 		double dx = odx;
 		double dy = ody;
+
 		MainChar main = me.myBoard.getMain();
 		int ceilDist = 1;
-		for (int i = 1; i < yrange/Element.SCALE; i++) {
-			if (!myMap.checkWall((int)(x+me.getWidth()/2),(int)(y+me.getHeight()-i*Element.SCALE))) {
+		for (int i = 1; i < yrange / Element.SCALE; i++) {
+			if (!myMap.checkWall((int) (x + me.getWidth() / 2),
+					(int) (y + me.getHeight() - i * Element.SCALE))) {
 				ceilDist = i;
 			}
 		}
-		if (main.getY() <= y + me.getHeight()
+		if (grounded && main.getY() <= y + me.getHeight()
 				&& main.getY() >= y - Element.SCALE * ceilDist
 				&& Math.abs(main.getX() - x) <= xrange
 				&& Math.abs(main.getX() - x) > main.getWidth()) {
@@ -37,20 +44,38 @@ public class aggressivePlatformAI implements AI {
 				dx = -me.SPEED;
 		}
 
-		if (dy < me.MAX_VERTICAL_SPEED)
-			dy += 0.5;
+		if (timer > 0) {
+			dx = 0.1 * (dx / Math.abs(dx));
+			timer -= MainChar.TIMER;
+		}
+		if (timer < 0) {
+			timer = 0;
+		}
+
 		if (myMap.checkWall((int) x, (int) (y + me.getHeight()))
 				|| myMap.checkWall((int) x + me.getWidth() - 1,
-						(int) (y + me.getHeight())))
+						(int) (y + me.getHeight()))) {
+			dy = Math.min(0, dy);
+			Tile t = myMap.getWallAt((int) x, (int) (y + me.getHeight()));
+			if (t == null) {
+				t = myMap.getWallAt((int) x + me.getWidth() - 1,
+						(int) (y + me.getHeight()));
+			}
+			y = t.getY() - me.getHeight();
+			if (!grounded && dy >= 0) {
+				timer = jump_spacing;
+			}
+			grounded = true;
+		}
+
+		if (!grounded && dy < me.MAX_VERTICAL_SPEED)
+			dy += 0.5;
+
+		if (timer == 0 && grounded) {
+			int dir = (int) (dx / Math.abs(dx));
+			dx = dir * me.SPEED;
 			dy = me.JUMP_SPEED;
-		int dir = (int) (dx / Math.abs(dx));
-		if (myMap.checkWall((int) (x + me.getWidth() / 2),
-				(int) (y + me.getHeight() + Element.SCALE))
-				&& !myMap
-						.checkWall((int) (x + me.getWidth() / 2 + me.getWidth()
-								/ 2 * dir + dx),
-								(int) (y + me.getHeight() + Element.SCALE / 2))) {
-			dx = -dx;
+			grounded = false;
 		}
 		boolean[] points = new boolean[8];
 		Tile[] tiles = new Tile[8];
@@ -91,7 +116,7 @@ public class aggressivePlatformAI implements AI {
 			if (tiles[3] != null && tiles[3].getX() > maxX)
 				maxX = tiles[3].getX();
 			x = maxX + Element.SCALE + 1;
-			dx = me.SPEED;
+			dx = 1;
 		} else if (points[2] || points[4]) {
 			int minX = myMap.getWidth();
 			if (tiles[2] != null && tiles[2].getX() < minX)
@@ -99,7 +124,7 @@ public class aggressivePlatformAI implements AI {
 			if (tiles[4] != null && tiles[4].getX() < minX)
 				minX = tiles[4].getX();
 			x = minX - me.getWidth() - 1;
-			dx = -me.SPEED;
+			dx = -1;
 		}
 
 		x += dx;
@@ -112,4 +137,5 @@ public class aggressivePlatformAI implements AI {
 		return results;
 
 	}
+
 }

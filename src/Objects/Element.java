@@ -82,6 +82,10 @@ public abstract class Element {
 		height = image.getHeight(null);
 	}
 	
+	public void setImage(Image ii) {
+		image = ii;
+	}
+	
 	public int getX() {
         return (int)(Math.round(x));
     }

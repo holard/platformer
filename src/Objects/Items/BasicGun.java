@@ -12,20 +12,25 @@ import GUI.Map;
 import Objects.Projectiles.BasicBullet;
 import Objects.Projectiles.Projectile;
 
-public class gun1 extends Gun {
+public class BasicGun extends Gun {
 	private String name = "Basic Gun";
 	private String description = "Just a trusty, rusty, dusty gun.";
 	
-	public gun1() {
+	public BasicGun() {
 		reloadRate = 300;
 		loaded = true;
-		ImageIcon ii = null;
+		ImageIcon left = null;
+		ImageIcon right = null;
 		try {
-			ii = new ImageIcon((new File(IMAGE_PATH + "gun1.png")).toURI().toURL());
+			left = new ImageIcon((new File(IMAGE_PATH + "basicGunLeft.png")).toURI().toURL());
+			right = new ImageIcon((new File(IMAGE_PATH + "basicGunRight.png")).toURI().toURL());
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		image = ii.getImage();
+		
+		leftImage = left.getImage();
+		rightImage = right.getImage();
+		image = rightImage;
 		xOffset = 0;
 		yOffset = 8;
 		init();

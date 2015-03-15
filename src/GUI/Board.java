@@ -1,7 +1,6 @@
 package GUI;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
@@ -20,7 +19,6 @@ import javax.swing.Timer;
 import GUI.Pages.Button;
 import GUI.Pages.ConfigurePage;
 import GUI.Pages.EquipPage;
-import GUI.Pages.ItemButton;
 import GUI.Pages.MenuButton;
 import GUI.Pages.MenuPage;
 import GUI.Pages.Page;
@@ -28,16 +26,16 @@ import Objects.Enemies.Enemy;
 import Objects.Items.*;
 import Objects.MainChar;
 import Objects.Projectiles.Projectile;
-import Objects.Tiles.Block;
 import Objects.Tiles.Tile;
 
 public class Board extends JPanel implements ActionListener {
 	// 0 = l, 1 = r, 2 = u, 3 = d, 4 = f, 5 = g, 6 = p
 	private Timer timer;
-	public static final int CAM_HB = 192;
-	public static final int CAM_VB = 128;
+	public static final int CAM_HB = 256;
+	public static final int CAM_VB = 160;
 	public static final int TIMER = 15;
 	public static int GUN_INV_SIZE = 3;
+	
 	public static int UP = KeyEvent.VK_UP;
 	public static int LEFT = KeyEvent.VK_LEFT;
 	public static int RIGHT = KeyEvent.VK_RIGHT;
@@ -45,6 +43,7 @@ public class Board extends JPanel implements ActionListener {
 	public static int F = KeyEvent.VK_F;
 	public static int G = KeyEvent.VK_G;
 	public static int P = KeyEvent.VK_P;
+	
 	public static final int HEALTH_PER_HEART = 10;
 	public static final int GLOBALX_START = 0;
 	public static final int GLOBALY_START = 0;
@@ -71,7 +70,7 @@ public class Board extends JPanel implements ActionListener {
 	public ArrayList<Page> menupages;
 	public ArrayList<Page> gamepages;
 	public ArrayList<Item> storage;
-	public int bIndex;
+	public int bIndex; //index of button currently selected
 	public int toConf = -1;
 	Item confirmStore = null;
 	private MenusHandler mh;
@@ -82,24 +81,39 @@ public class Board extends JPanel implements ActionListener {
 		setBackground(Color.BLACK);
 		setDoubleBuffered(true);
 		ingame = false;
-		setSize(400, 300);
-		menupages = new ArrayList<Page>();
-		gamepages = new ArrayList<Page>();
+		setSize(400, 300);		
 		camx = 0;
 		camy = 0;
 		camw = MainMethod.WIDTH;
 		camh = MainMethod.HEIGHT;
+		
 		initGame();
-		bIndex = 0;
+		initMenus();
+		
 		timer = new Timer(TIMER, this);
-		timer.start();
+		timer.start();	
+	}
+
+	public void initGame() {
+		craft = new MainChar(this);
+		craft.setMyGun(new BasicGun());
+		setMap(START_MAPFILE);
+		globalx = GLOBALX_START;
+		globaly = GLOBALY_START;
+		readXYChart();
+		
 		myGuns = new ArrayList<Gun>();
 		mh = new MenusHandler(this);
-		myGuns.add(new bubbleBombLauncher());
-		myGuns.add(new bubblegun());
-		myGuns.add(new gun2());
+		myGuns.add(new BubbleBombLauncher());
+		myGuns.add(new BubbleGun());
+		myGuns.add(new DoubleGun());
+	}
+	
+	public void initMenus() {
+		menupages = new ArrayList<Page>();
+		gamepages = new ArrayList<Page>();
+		
 		ArrayList<Button> mmButtons = new ArrayList<Button>();
-
 		mmButtons.add(new MenuButton(150, 200, -1, "START GAME", 64));
 		mmButtons.add(new MenuButton(150, 280, 1, "CREDITS", 64));
 		mmButtons.add(new MenuButton(150, 360, 2, "CONFIGURE", 64));
@@ -116,19 +130,8 @@ public class Board extends JPanel implements ActionListener {
 		menupages.add(mainMenu);
 		menupages.add(credits);
 		menupages.add(confPage);
-	}
-
-	public void initGame() {
-		craft = new MainChar(this);
-		craft.setMyGun(new gun1());
-		setMap(START_MAPFILE);
-		globalx = GLOBALX_START;
-		globaly = GLOBALY_START;
-		readXYChart();
-	}
-
-	public MainChar getMain() {
-		return craft;
+		
+		bIndex = 0;
 	}
 	
 	/*
@@ -213,7 +216,7 @@ public class Board extends JPanel implements ActionListener {
 		enemies = OR.makeEnemies();
 		projectiles = new ArrayList<Projectile>(40000);
 	}
-
+	
 	// Returns enemy at x and y, if none return null
 	public Enemy checkEnemy(double x, double y) {
 		for (int i = 0; i < enemies.size(); i++) {
@@ -289,7 +292,7 @@ public class Board extends JPanel implements ActionListener {
 				if (craft.isVisible() && (craft.getInvince() / INVINCIBILITY_FLASH_RATE) % 4 != 1) {
 					g2d.drawImage(craft.getImage(), craft.getX() - camx,
 							craft.getY() - camy, this);
-					if (craft.getMyGun() != null) {
+					if (craft.getMyGun() != null && craft.getStick() == 0 && craft.getHang() == null) {
 						Item i = craft.getMyGun();
 						g2d.drawImage(i.getImage(), craft.getX() - camx
 								+ i.xOffset, craft.getY() - camy + i.yOffset,
@@ -363,32 +366,148 @@ public class Board extends JPanel implements ActionListener {
 		}
 		repaint();
 	}
+	
+	public void handleConfig(int key) {
+		if (toConf == -1) {
+			if (key == UP) {
+				if (bIndex > 0) {
+					bIndex -= 1;
+				} else {
+					bIndex = menupages.get(menu).getButtons().size() - 1;
+				}
+			}
+			if (key == DOWN) {
+				ArrayList<Button> curButtons = menupages.get(menu)
+						.getButtons();
+				if (bIndex < curButtons.size() - 1) {
+					bIndex += 1;
+				} else {
+					bIndex = 0;
+				}
+			}
+			if (key == F) {
+				toConf = menupages.get(menu).getButtons().get(bIndex)
+						.getDestination();
+				if (toConf == -1) {
+					bIndex = 0;
+					menu = 0;
+				}
+				return;
+			}
+		} else {
+			switch (toConf) {
+			case 0:
+				LEFT = key;
+				break;
+			case 1:
+				RIGHT = key;
+				break;
+			case 2:
+				UP = key;
+				break;
+			case 3:
+				DOWN = key;
+				break;
+			case 4:
+				F = key;
+				break;
+			case 5:
+				G = key;
+				break;
+			case 6:
+				P = key;
+				break;
+			}
 
-	public ArrayList<Projectile> getProjectiles() {
-		return projectiles;
-	}
-
-	public ArrayList<Enemy> getEnemies() {
-		return enemies;
-	}
-
-	private class TAdapter extends KeyAdapter {
-		public void keyReleased(KeyEvent e) {
-			if (ingame && !paused)
-				craft.keyReleased(e);
+			toConf = -1;
 		}
+	}
 
-		public void handleConfig(int key) {
-			if (toConf == -1) {
+	public void initEquips() {
+		if (menu == 1) {
+			EquipPage ep = (EquipPage) gamepages.get(1);
+			ArrayList<Item> temp = new ArrayList<Item>(myGuns);
+			ep.setItems(craft.getMyGun(), temp);
+		}
+	}
+
+	public void handleEquipPage(int key) {
+		if (confirmStore == null) {
+			if (key == F) {
+				if (myGuns.size() > 0) {
+					Gun n = myGuns.remove(bIndex);
+					craft.getMyGun().setImage(craft.getMyGun().getRightImage());
+					myGuns.add(craft.getMyGun());
+					craft.setMyGun(n);
+					initEquips();
+				}
+
+			}
+			if (key == G) {
+				if (myGuns.size() > 0) {
+					confirmStore = myGuns.get(bIndex);
+				}
+			}
+		} else {
+			if (key == F) {
+				if (myGuns.size() > 0) {
+					storage.add(confirmStore);
+					myGuns.remove(confirmStore);
+					if (bIndex > 0) {
+						bIndex -= 1;
+					} else {
+						bIndex = 0;
+					}
+					initEquips();
+				}
+				confirmStore = null;
+
+			}
+			if (key == G) {
+				confirmStore = null;
+			}
+
+		}
+	}
+
+	public void handleInGame(int key) {
+		if (key == P) {
+			paused = !paused;
+			bIndex = 0;
+			if (menu == -1) {
+				menu = 0;
+			} else {
+				menu = -1;
+			}
+			craft.releaseAll();
+		} else if (paused) { // in game menu
+			if (key == LEFT) {
+				bIndex = 0;
+				if (menu > 0) {
+					menu -= 1;
+				} else
+					menu = gamepages.size() - 1;
+				if (menu == 1)
+					initEquips();
+			} else if (key == RIGHT) {
+				bIndex = 0;
+				if (menu < gamepages.size() - 1) {
+					menu += 1;
+				} else
+					menu = 0;
+				if (menu == 1)
+					initEquips();
+			}
+			if (menu != 0) { // navigable pages
 				if (key == UP) {
 					if (bIndex > 0) {
 						bIndex -= 1;
 					} else {
-						bIndex = menupages.get(menu).getButtons().size() - 1;
+						bIndex = gamepages.get(menu).getButtons().size() - 1;
 					}
 				}
 				if (key == DOWN) {
-					ArrayList<Button> curButtons = menupages.get(menu)
+					ArrayList<Button> curButtons = gamepages.get(menu)
 							.getButtons();
 					if (bIndex < curButtons.size() - 1) {
 						bIndex += 1;
@@ -396,140 +515,29 @@ public class Board extends JPanel implements ActionListener {
 						bIndex = 0;
 					}
 				}
-				if (key == F) {
-					toConf = menupages.get(menu).getButtons().get(bIndex)
-							.getDestination();
-					if (toConf == -1) {
-						bIndex = 0;
-						menu = 0;
-					}
-					return;
+				if (menu == 1) { // EQUIP PAGE
+					handleEquipPage(key);
 				}
-			} else {
-				switch (toConf) {
-				case 0:
-					LEFT = key;
-					break;
-				case 1:
-					RIGHT = key;
-					break;
-				case 2:
-					UP = key;
-					break;
-				case 3:
-					DOWN = key;
-					break;
-				case 4:
-					F = key;
-					break;
-				case 5:
-					G = key;
-					break;
-				case 6:
-					P = key;
-					break;
-				}
-
-				toConf = -1;
 			}
 		}
+	}
+	
+	public ArrayList<Projectile> getProjectiles() {
+		return projectiles;
+	}
 
-		public void initEquips() {
-			if (menu == 1) {
-				EquipPage ep = (EquipPage) gamepages.get(1);
-				ArrayList<Item> temp = new ArrayList<Item>(myGuns);
-				ep.setItems(craft.getMyGun(), temp);
-			}
-		}
+	public ArrayList<Enemy> getEnemies() {
+		return enemies;
+	}
+	
+	public MainChar getMain() {
+		return craft;
+	}
 
-		public void handleEquipPage(int key) {
-			if (confirmStore == null) {
-				if (key == F) {
-					if (myGuns.size() > 0) {
-						Gun n = myGuns.remove(bIndex);
-						myGuns.add(craft.getMyGun());
-						craft.setMyGun(n);
-						initEquips();
-					}
-
-				}
-				if (key == G) {
-					if (myGuns.size() > 0) {
-						confirmStore = myGuns.get(bIndex);
-					}
-				}
-			} else {
-				if (key == F) {
-					if (myGuns.size() > 0) {
-						storage.add(confirmStore);
-						myGuns.remove(confirmStore);
-						if (bIndex > 0) {
-							bIndex -= 1;
-						} else {
-							bIndex = 0;
-						}
-						initEquips();
-					}
-					confirmStore = null;
-
-				}
-				if (key == G) {
-					confirmStore = null;
-				}
-
-			}
-		}
-
-		public void handleInGame(int key) {
-			if (key == P) {
-				paused = !paused;
-				bIndex = 0;
-				if (menu == -1) {
-					menu = 0;
-				} else {
-					menu = -1;
-				}
-				craft.releaseAll();
-			} else if (paused) { // in game menu
-				if (key == LEFT) {
-					bIndex = 0;
-					if (menu > 0) {
-						menu -= 1;
-					} else
-						menu = gamepages.size() - 1;
-					if (menu == 1)
-						initEquips();
-				} else if (key == RIGHT) {
-					bIndex = 0;
-					if (menu < gamepages.size() - 1) {
-						menu += 1;
-					} else
-						menu = 0;
-					if (menu == 1)
-						initEquips();
-				}
-				if (menu != 0) { // navigable pages
-					if (key == UP) {
-						if (bIndex > 0) {
-							bIndex -= 1;
-						} else {
-							bIndex = gamepages.get(menu).getButtons().size() - 1;
-						}
-					}
-					if (key == DOWN) {
-						ArrayList<Button> curButtons = gamepages.get(menu)
-								.getButtons();
-						if (bIndex < curButtons.size() - 1) {
-							bIndex += 1;
-						} else {
-							bIndex = 0;
-						}
-					}
-					if (menu == 1) { // EQUIP PAGE
-						handleEquipPage(key);
-					}
-				}
-			}
+	private class TAdapter extends KeyAdapter {
+		public void keyReleased(KeyEvent e) {
+			if (ingame && !paused)
+				craft.keyReleased(e);
 		}
 
 		public void keyPressed(KeyEvent e) {

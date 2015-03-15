@@ -1,21 +1,10 @@
 package Objects;
 
-import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-
 import GUI.Board;
 import GUI.Map;
 import Objects.Enemies.Enemy;
 import Objects.Items.Gun;
-import Objects.Items.Item;
-import Objects.Items.gun1;
-import Objects.Projectiles.BasicBullet;
 import Objects.Tiles.Tile;
 
 public class MainChar extends Element {
@@ -31,14 +20,13 @@ public class MainChar extends Element {
 	private boolean[] lrud = { false, false, false, false };
 	private boolean[] lrud2 = { false, false, false, false };
 	private boolean iChange = false; // image change needed
-	private int stick = 0;
+	private int stick = 0; //0 if not stuck, -1 if stuck on left, 1 if stuck on right
 	private int sticktime = 0;
 	private int energy = MAX_ENERGY;
 	private int lastkey = -1;
 	private int doubletimer = 0;
 	private int keycount = 0;
-	private Tile hang;
-	private boolean hung = false;
+	private Tile hang; //null if not hanging, otherwise holds tile that is hung on
 	private Gun myGun;
 	private boolean firing = false;
 	private int health;
@@ -49,12 +37,12 @@ public class MainChar extends Element {
 	private Tile lastTile = null;
 
 	public MainChar(Board myb) {
-		setImage(IMAGE_PATH + "craft.png");
+		setImage(IMAGE_PATH + "charRight.png");
 		width = image.getWidth(null);
 		height = image.getHeight(null);
 		visible = true;
-		x = Board.GLOBALX_START + 2500;
-		y = Board.GLOBALY_START + 50;
+		x = Board.GLOBALX_START + 50;
+		y = Board.GLOBALY_START + 500;
 		checkX = (int) x;
 		checkY = (int) y;
 		System.out.println(checkX);
@@ -166,7 +154,6 @@ public class MainChar extends Element {
 					&& !myMap.checkWall(getX(), tiles[3].getPosition().second()
 							+ SCALE) && dx < 0 && dy > 0) {
 				hang = tiles[3];
-				hung = false;
 				jumps = 0;
 			} else if (!myMap.checkWall(getX(), getY() + height + SCALE)
 					&& dx < -.15 * TIMER && tiles[3].canStick() && hang == null) {
@@ -181,7 +168,6 @@ public class MainChar extends Element {
 					&& !myMap.checkWall(getX(), tiles[5].getPosition().second()
 							+ SCALE) && dx < -.15 * TIMER) {
 				hang = tiles[5];
-				hung = false;
 				jumps = 0;
 			}
 			Tile t = tiles[5];
@@ -219,7 +205,6 @@ public class MainChar extends Element {
 							.getPosition().second() + SCALE)
 					&& dx > .15 * TIMER) {
 				hang = tiles[7];
-				hung = false;
 				jumps = 0;
 			}
 			Tile t = tiles[7];
@@ -242,7 +227,6 @@ public class MainChar extends Element {
 		if (lrud[2]) { // pressing the UP arrow
 			if (hang != null) {
 				hang = null;
-				hung = false;
 				dy = -7.5;
 			} else {
 				if (stick == -1) {
@@ -327,8 +311,6 @@ public class MainChar extends Element {
 
 		if (hang != null && y >= hang.getPosition().second()) {
 			y = hang.getPosition().second();
-			if (dy >= 0)
-				hung = true;
 			dy = 0;
 			firing = false;
 		}
@@ -450,7 +432,9 @@ public class MainChar extends Element {
 		if (key == Board.LEFT) {
 			lrud[0] = true;
 			lrud2[0] = true;
-			setImage(IMAGE_PATH + "craft2.png");
+			setImage(IMAGE_PATH + "charLeft.png");
+			myGun.setImage(myGun.getLeftImage());
+			
 			if ((myMap.checkWall(getX(), getY() + height) || myMap.checkWall(
 					getX() + width - 1, getY() + height))
 					&& lastkey == key
@@ -463,7 +447,8 @@ public class MainChar extends Element {
 		if (key == Board.RIGHT) {
 			lrud[1] = true;
 			lrud2[1] = true;
-			setImage(IMAGE_PATH + "craft.png");
+			setImage(IMAGE_PATH + "charRight.png");
+			myGun.setImage(myGun.getRightImage());
 			if ((myMap.checkWall(getX(), getY() + height) || myMap.checkWall(
 					getX() + width - 1, getY() + height))
 					&& lastkey == key
@@ -499,15 +484,19 @@ public class MainChar extends Element {
 		if (key == Board.LEFT) {
 			lrud[0] = false;
 			lrud2[0] = false;
-			if (lrud[1])
-				setImage(IMAGE_PATH + "craft.png");
+			if (lrud[1]) {
+				setImage(IMAGE_PATH + "charRight.png");
+				myGun.setImage(myGun.getRightImage());
+			}
 		}
 
 		if (key == Board.RIGHT) {
 			lrud[1] = false;
 			lrud2[1] = false;
-			if (lrud[0])
-				setImage(IMAGE_PATH + "craft2.png");
+			if (lrud[0]) {
+				setImage(IMAGE_PATH + "charLeft.png");
+				myGun.setImage(myGun.getLeftImage());
+			}
 		}
 
 		if (key == Board.UP) {
@@ -551,5 +540,13 @@ public class MainChar extends Element {
 
 	public void setMaxhealth(int maxhealth) {
 		this.maxhealth = maxhealth;
+	}
+	
+	public Tile getHang() {
+		return hang;
+	}
+	
+	public int getStick() {
+		return stick;
 	}
 }

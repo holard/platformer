@@ -1,5 +1,7 @@
 package Objects.Items;
 
+import java.awt.Image;
+
 import GUI.Board;
 import GUI.Map;
 
@@ -8,6 +10,9 @@ public abstract class Gun extends Item {
 	protected int reloadRate;
 	protected boolean loaded;
 	protected int reload = 0;
+	protected Image leftImage;
+	protected Image rightImage;
+	public static final String IMAGE_PATH = "Images/Items/Guns/";
 
 	protected void init() {
 		reload = reloadRate;
@@ -23,6 +28,14 @@ public abstract class Gun extends Item {
 	
 	public boolean charged() {
 		return false;
+	}
+	
+	public Image getLeftImage() {
+		return leftImage;
+	}
+	
+	public Image getRightImage() {
+		return rightImage;
 	}
 	
 	public void dud() {

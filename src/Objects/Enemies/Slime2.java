@@ -21,6 +21,6 @@ public class Slime2 extends Enemy {
 		xKnockBack = 10;
 		yKnockBack = 4;
 		
-		myAI = new aggressiveLeapAI(1000,200, SCALE*5);
+		myAI = new AggressiveLeapAI(1000,200, SCALE*5);
 	}
 }

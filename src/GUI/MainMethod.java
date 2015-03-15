@@ -2,7 +2,7 @@ package GUI;
 import javax.swing.JFrame;
 
 public class MainMethod extends JFrame {
-	public static final int WIDTH = 720;
+	public static final int WIDTH = 840;
 	public static final int HEIGHT = 480;
     public MainMethod() {
         add(new Board());

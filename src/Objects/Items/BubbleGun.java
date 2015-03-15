@@ -4,28 +4,35 @@ import java.awt.Image;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.ImageIcon;
 
 import GUI.Board;
 import GUI.Map;
 import Objects.Projectiles.BasicBullet;
+import Objects.Projectiles.BubbleProj;
 import Objects.Projectiles.Projectile;
 
-public class gun2 extends Gun {
-	private String name = "Gun 2.0";
-	private String description = "Double shooter.";
+public class BubbleGun extends Gun {
+	private String name = "BubbleGun";
+	private String description = "Shoots bubbles. What did you expect?";
 	
-	public gun2() {
-		reloadRate = 360;
+	public BubbleGun() {
+		reloadRate = 1;
 		loaded = true;
-		ImageIcon ii = null;
+		ImageIcon left = null;
+		ImageIcon right = null;
 		try {
-			ii = new ImageIcon((new File(IMAGE_PATH + "gun2.png")).toURI().toURL());
+			left = new ImageIcon((new File(IMAGE_PATH + "bubbleGunLeft.png")).toURI().toURL());
+			right = new ImageIcon((new File(IMAGE_PATH + "bubbleGunRight.png")).toURI().toURL());
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		image = ii.getImage();
+		leftImage = left.getImage();
+		rightImage = right.getImage();
+		image = rightImage;
+		
 		xOffset = 0;
 		yOffset = 8;
 		init();
@@ -51,11 +58,11 @@ public class gun2 extends Gun {
 		if (!loaded) {
 			return;
 		}
-		int bullet_dx = 10 * dir;
+		int bullet_dx = 3 * dir;
 		int bullet_dy = 0;
 		int bullet_x, bullet_y;
 
-		BasicBullet bullet = new BasicBullet(0, 0, bullet_dx, bullet_dy, m,
+		BubbleProj bullet = new BubbleProj(0, 0, bullet_dx, bullet_dy, m,
 				b);
 		int b_width = bullet.getWidth();
 		int b_height = bullet.getHeight();
@@ -66,12 +73,12 @@ public class gun2 extends Gun {
 			bullet_x = x - b_width;
 			bullet_y = y + height / 2 - b_height / 2;
 		}
+		Random r = new Random();
+		for (int i = 0; i < 3; i++)
 		b.getProjectiles().add(
-				new BasicBullet(bullet_x, bullet_y, bullet_dx, bullet_dy-2,
+				new BubbleProj(bullet_x, bullet_y, bullet_dx, bullet_dy-(int)(5*r.nextDouble()),
 						m, b));
-		b.getProjectiles().add(
-				new BasicBullet(bullet_x, bullet_y, bullet_dx, bullet_dy+2,
-						m, b));
+		
 		super.fire();
 	}
 

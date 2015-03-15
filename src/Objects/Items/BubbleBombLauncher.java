@@ -15,23 +15,27 @@ import Objects.Projectiles.BubbleBomb;
 import Objects.Projectiles.BubbleProj;
 import Objects.Projectiles.Projectile;
 
-public class bubbleBombLauncher extends Gun {
+public class BubbleBombLauncher extends Gun {
 	private String name = "BubbleBomber";
 	private String description = "Blows big, bursting, bubble bombs";
 	private double charge;
 	private static final int MAX_CHARGE = 11;
 
-	public bubbleBombLauncher() {
+	public BubbleBombLauncher() {
 		reloadRate = 1500;
 		loaded = true;
-		ImageIcon ii = null;
+		ImageIcon left = null;
+		ImageIcon right = null;
 		try {
-			ii = new ImageIcon((new File(IMAGE_PATH + "gun1.png")).toURI()
-					.toURL());
+			left = new ImageIcon((new File(IMAGE_PATH + "bubbleBombLauncherLeft.png")).toURI().toURL());
+			right = new ImageIcon((new File(IMAGE_PATH + "bubbleBombLauncherRight.png")).toURI().toURL());
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		image = ii.getImage();
+		leftImage = left.getImage();
+		rightImage = right.getImage();
+		image = rightImage;
+		
 		xOffset = 0;
 		yOffset = 8;
 		charge = 0;

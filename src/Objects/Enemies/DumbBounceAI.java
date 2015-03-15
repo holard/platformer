@@ -2,16 +2,10 @@ package Objects.Enemies;
 
 import GUI.Map;
 import Objects.Element;
-import Objects.MainChar;
 import Objects.Tiles.Tile;
 
-public class leapAI implements AI{
-	private int timer = 0;
-	private int jump_spacing;
-	boolean grounded = false;
-	public leapAI(int sp) {
-		jump_spacing = sp;
-	}
+public class DumbBounceAI implements AI{
+
 	@Override
 	public double[] move(double ox, double oy, double odx, double ody, Map myMap,
 			Enemy me) {
@@ -19,41 +13,11 @@ public class leapAI implements AI{
 		double y = oy;
 		double dx = odx;
 		double dy = ody;
-		if (timer > 0) {
-			dx = 0.1*(dx/Math.abs(dx));
-			timer -= MainChar.TIMER;
-		}
-		if (timer < 0) {
-			timer = 0;
-		}
-		
-		
-		
-
-		
-		if (myMap.checkWall((int)x,(int)(y + me.getHeight())) || myMap.checkWall((int)x + me.getWidth() - 1, (int)(y + me.getHeight())))
-		{
-			dy = Math.min(0, dy);
-			Tile t = myMap.getWallAt((int)x,(int)(y + me.getHeight()));
-			if (t == null) {
-				t = myMap.getWallAt((int)x + me.getWidth() - 1, (int)(y + me.getHeight()));
-			}
-			y = t.getY() - me.getHeight();
-			if (!grounded && dy >= 0) {
-				timer = jump_spacing;
-			}
-			grounded = true;
-		}
-		
-		if (!grounded && dy < me.MAX_VERTICAL_SPEED) 
+		if (dy < me.MAX_VERTICAL_SPEED) 
 			dy += 0.5;
-		
-		if (timer == 0 && grounded) {
-			int dir = (int)(dx/Math.abs(dx));
-			dx = dir*me.SPEED;
+		if (myMap.checkWall((int)x,(int)(y + me.getHeight())) || myMap.checkWall((int)x + me.getWidth() - 1, (int)(y + me.getHeight())))
 			dy = me.JUMP_SPEED;
-			grounded = false;
-		}
+		
 		boolean[] points = new boolean[8];
 		Tile[] tiles = new Tile[8];
 		me.epquery(points, tiles, (int)(x + dx), (int)(y + dy), me.getWidth(), me.getHeight());
