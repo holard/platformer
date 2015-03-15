@@ -6,7 +6,7 @@ import Objects.Tiles.Tile;
 
 public class BasicBullet extends Projectile {
 	public BasicBullet(double x, double y, double dx, double dy, Map M, Board B) {
-		setImage(IMAGE_PATH + "missile.png");	
+		setImage(IMAGE_PATH + "basicBullet.png");	
 		initProjectile(x,y,dx,dy,M,B);
 		
 		damage = 90;

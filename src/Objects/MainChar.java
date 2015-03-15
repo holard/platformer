@@ -160,6 +160,7 @@ public class MainChar extends Element {
 			} else if (!myMap.checkWall(getX(), getY() + height + SCALE)
 					&& dx < -.15 * TIMER && tiles[3].canStick() && hang == null) {
 				stick = -1;
+				System.out.println("left stick set");
 				sticktime = 150;
 			}
 			dx = 0;
@@ -197,6 +198,7 @@ public class MainChar extends Element {
 					+ SCALE)
 					&& dx > .15 * TIMER && tiles[4].canStick()) {
 				stick = 1;
+				System.out.println("left stick set");
 				sticktime = 150;
 			}
 			dx = 0;
@@ -417,11 +419,11 @@ public class MainChar extends Element {
 		if (outOfBounds()) {
 			myBoard.changeMap(0);
 		}
+		
 	}
 
-	public void keyPressed(KeyEvent e) {
+	public void keyPressed(int key) {
 
-		int key = e.getKeyCode();
 		if (keycount == 0)
 			doubletimer = 200;
 
@@ -461,11 +463,16 @@ public class MainChar extends Element {
 			lastkey = key;
 		}
 
-		if (key == Board.DOWN) {
-			lrud[3] = true;
-			lrud2[3] = true;
-			hang = null;
-			lastkey = key;
+		if (key == Board.DOWN) {			
+			if (myBoard.checkNPC(x + width/2, y + height/2) != null) {
+				myBoard.setNPC(myBoard.checkNPC(x + width/2,y + height/2));
+			}
+			else {
+				lrud[3] = true;
+				lrud2[3] = true;
+				hang = null;
+				lastkey = key;
+			}
 		}
 
 		if (key == Board.F) {

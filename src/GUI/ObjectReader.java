@@ -8,6 +8,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import Objects.Enemies.Enemy;
+import Objects.NPCs.NPC;
+import Objects.NPCs.SimpleNPC;
 
 public class ObjectReader {
 	private String objectFile;
@@ -48,11 +50,11 @@ public class ObjectReader {
 			String line = BR.readLine();
 			String[] elems = new String[4];
 			
-			//Line format: <Type> <Name> <x> <y>
+			//Line format for enemy: Enemy <Name> <x> <y>
 			while (line != null) {
 				elems = line.split(" ");
+								
 				if (elems[0].equals("Enemy")) {
-					String name = elems[1];
 					c = Class.forName(CLASS_PATH + elems[1]);
 					ctor = c.getDeclaredConstructor(parClasses);
 					ctor.setAccessible(true);
@@ -88,5 +90,37 @@ public class ObjectReader {
 		}
 		
 		return enemies;
+	}
+	
+	public ArrayList<NPC> makeNPCs() {
+		ArrayList<NPC> npcs = new ArrayList<NPC>();
+		BufferedReader BR;
+		
+		try {
+			BR = new BufferedReader(new FileReader(objectFile));
+			String line = BR.readLine();
+			String[] elems = new String[5];
+			
+			//line format for NPC: NPC <Type> <Name> <x> <y>
+			while (line != null) {
+				elems = line.split(" ");
+				
+				if (elems[0].equals("NPC")) {
+					if (elems[1].equals("SimpleNPC")) {
+						SimpleNPC n = new SimpleNPC(elems[2], myBoard, 
+								Double.parseDouble(elems[3]), Double.parseDouble(elems[4]));
+						npcs.add(n);
+					}
+				}
+				
+				line = BR.readLine();
+			}
+			
+			BR.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return npcs;
 	}
 }

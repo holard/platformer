@@ -25,6 +25,8 @@ import GUI.Pages.Page;
 import Objects.Enemies.Enemy;
 import Objects.Items.*;
 import Objects.MainChar;
+import Objects.NPCs.NPC;
+import Objects.NPCs.NPCText;
 import Objects.Projectiles.Projectile;
 import Objects.Tiles.Tile;
 
@@ -58,8 +60,10 @@ public class Board extends JPanel implements ActionListener {
 	private ArrayList<Tile> blocks;
 	private ArrayList<Projectile> projectiles;
 	private ArrayList<Enemy> enemies;
+	private ArrayList<NPC> NPCs;
 	private ArrayList<Pair<int[], String>> xychart;
 	private ArrayList<Gun> myGuns;
+	private NPC activeNPC;
 	private boolean ingame;
 	private Map M;
 	private int camx;
@@ -104,6 +108,7 @@ public class Board extends JPanel implements ActionListener {
 		globalx = GLOBALX_START;
 		globaly = GLOBALY_START;
 		readXYChart();
+		activeNPC = null;
 
 		myGuns = new ArrayList<Gun>();
 		mh = new MenusHandler(this);
@@ -219,7 +224,13 @@ public class Board extends JPanel implements ActionListener {
 
 		ObjectReader OR = new ObjectReader(file + "/objects.txt", M, this);
 		enemies = OR.makeEnemies();
+		NPCs = OR.makeNPCs();
 		projectiles = new ArrayList<Projectile>(40000);
+	}
+	
+	public void setNPC(NPC n) {
+		System.out.println("setNPC");
+		activeNPC = n;
 	}
 
 	// Returns enemy at x and y, if none return null
@@ -230,6 +241,18 @@ public class Board extends JPanel implements ActionListener {
 					&& (x < e.getX() + e.getWidth())
 					&& (y < e.getY() + e.getHeight()))
 				return e;
+		}
+		return null;
+	}
+	
+	// Returns NPC at x and y, if none return null
+	public NPC checkNPC(double x, double y) {
+		for (int i = 0; i < NPCs.size(); i++) {
+			NPC n = NPCs.get(i);
+			if ((x >= n.getX()) && (y >= n.getY())
+					&& (x < n.getX() + n.getWidth())
+					&& (y < n.getY() + n.getHeight()))
+				return n;
 		}
 		return null;
 	}
@@ -326,6 +349,17 @@ public class Board extends JPanel implements ActionListener {
 						g2d.drawImage(e.getImage(), e.getX() - camx, e.getY()
 								- camy, this);
 					e.drawHealth(g2d, camx, camy);
+				}
+				
+				for (int i = 0; i < NPCs.size(); i++) {
+					NPC n = NPCs.get(i);
+					if (n.isVisible())
+						g2d.drawImage(n.getImage(), n.getX() - camx, n.getY()
+								- camy, this);
+				}
+				
+				if (activeNPC != null) {
+					activeNPC.draw(g2d);
 				}
 
 				handleGunBar(g2d);
@@ -501,6 +535,7 @@ public class Board extends JPanel implements ActionListener {
 				menu = -1;
 			}
 			craft.releaseAll();
+			
 		} else if (paused) { // in game menu
 			if (key == LEFT) {
 				bIndex = 0;
@@ -510,6 +545,7 @@ public class Board extends JPanel implements ActionListener {
 					menu = gamepages.size() - 1;
 				if (menu == 1)
 					initEquips();
+				
 			} else if (key == RIGHT) {
 				bIndex = 0;
 				if (menu < gamepages.size() - 1) {
@@ -519,6 +555,7 @@ public class Board extends JPanel implements ActionListener {
 				if (menu == 1)
 					initEquips();
 			}
+			
 			if (menu != 0) { // navigable pages
 				if (key == UP) {
 					if (bIndex > 0) {
@@ -540,6 +577,11 @@ public class Board extends JPanel implements ActionListener {
 					handleEquipPage(key);
 				}
 			}
+			
+		} else if (activeNPC != null) { //Ingame and not paused
+			activeNPC.interact(key);
+		} else {
+			craft.keyPressed(key);
 		}
 	}
 
@@ -557,7 +599,7 @@ public class Board extends JPanel implements ActionListener {
 
 	private class TAdapter extends KeyAdapter {
 		public void keyReleased(KeyEvent e) {
-			if (ingame && !paused)
+			if (ingame && !paused && activeNPC == null)
 				craft.keyReleased(e);
 		}
 
@@ -596,8 +638,7 @@ public class Board extends JPanel implements ActionListener {
 			} else { // ingame == true
 				handleInGame(key);
 			}
-			if (ingame && !paused)
-				craft.keyPressed(e);
+				
 		}
 	}
 }

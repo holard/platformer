@@ -1,0 +1,27 @@
+0 Hi my name is Bob! Welcome to however much we have built of this game. What do you want to know? 4
+How to double jump 1
+How to dash 2
+How to wall jump 3
+Done 6
+
+1 To double jump, simply press the UP key again in the air! This does not necessarily have to be preceded by a jump, for example, you could fall from a ledge and still have a double jump, though you won't be able to jump twice in the air after falling from a ledge. 1
+Okay 5
+
+2 To dash, press either LEFT or RIGHT twice quickly in succession 1
+Okay 5
+
+3 To wall jump, press UP and the opposite direction of the wall 1
+Okay 5
+
+4 Fifth 3
+Sixth 5
+Seventh 6
+First 0
+
+5 Do you want to know anything else? 4
+How to double jump 1
+How to dash 2
+How to wall jump 3
+Done 6
+
+6 Feel free to talk to me again if you want to know anything else! 0

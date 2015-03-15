@@ -3,3 +3,4 @@ Enemy Slime1 1300 512
 Enemy Slime2 1952 512
 Enemy Slime2 2152 512
 Enemy Slime2 2496 50
+NPC SimpleNPC Bob 192 224
