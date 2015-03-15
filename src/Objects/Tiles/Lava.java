@@ -19,8 +19,28 @@ public class Lava implements Tile {
 	public Lava(int x, int y) {
 
 		ImageIcon ii = null;
+		String filename = "lava2.png";
 		try {
-			ii = new ImageIcon((new File(IMAGE_PATH + "lava.png")).toURI()
+			ii = new ImageIcon((new File(IMAGE_PATH + filename)).toURI()
+					.toURL());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+
+		image = ii.getImage();
+		width = image.getWidth(null);
+		height = image.getHeight(null);
+		visible = true;
+		this.x = x;
+		this.y = y;
+	}
+	
+	public Lava(int x, int y, int n) {
+
+		ImageIcon ii = null;
+		String filename = "lava.png";
+		try {
+			ii = new ImageIcon((new File(IMAGE_PATH + filename)).toURI()
 					.toURL());
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

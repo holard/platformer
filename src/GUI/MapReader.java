@@ -41,6 +41,8 @@ public class MapReader {
 						tiles.add(new BasicBlock(32 * j, 32 * i));
 					else if (c == 'L')
 						tiles.add(new Lava(32 * j, 32 * i));
+					else if (c == 'l')
+						tiles.add(new Lava(32 * j, 32 * i, 0)); //Not surface lava
 					else if (c == 'B')
 						tiles.add(new BackToCP(32 * j, 32 * i));
 

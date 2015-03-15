@@ -4,6 +4,7 @@ import GUI.Board;
 import GUI.Map;
 import Objects.Element;
 import Objects.Enemies.Enemy;
+import Objects.Tiles.Tile;
 
 public abstract class Projectile extends Element {
 	public double dx, dy;
@@ -34,7 +35,10 @@ public abstract class Projectile extends Element {
 			if (timer == 0)
 				death();
 		}
-
+		Tile t = myMap.getTileAt((int)(x+width/2), (int)(y+height/2));
+		if (t!=null && t.isLava()) {
+			myBoard.getProjectiles().remove(this);
+		}
 		Enemy e = enemyCollide();
 		if (e != null) {
 			e.hit(this);
