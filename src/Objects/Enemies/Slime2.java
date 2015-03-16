@@ -2,7 +2,9 @@ package Objects.Enemies;
 
 import GUI.Board;
 import GUI.Map;
+import Objects.Items.BasicGun;
 import Objects.Tiles.Tile;
+import Objects.fieldItems.StandardItem;
 
 public class Slime2 extends Enemy {
 	
@@ -22,5 +24,12 @@ public class Slime2 extends Enemy {
 		yKnockBack = 4;
 		
 		myAI = new AggressiveLeapAI(1000,200, SCALE*5);
+	}
+	
+	@Override
+	public void die() {
+		myBoard.getFieldItems().add(new StandardItem((int)x,(int)y, myMap, myBoard, new BasicGun()));
+		
+		super.die();
 	}
 }

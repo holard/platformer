@@ -12,10 +12,14 @@ import GUI.Pages.ItemButton;
 import GUI.Pages.MenuButton;
 import GUI.Pages.MenuPage;
 import GUI.Pages.Page;
+import Objects.DataCenter;
+import Objects.Items.Bag;
 import Objects.Items.Gun;
 import Objects.Items.Item;
 
 public class MenusHandler {
+	public static int ITEMS_PER_ROW = 6;
+
 	Board b;
 	ArrayList<Page> gamepages;
 	ArrayList<Page> menupages;
@@ -23,6 +27,7 @@ public class MenusHandler {
 	int bIndex;
 	Item confirmStore;
 	int toConf;
+	DataCenter data;
 
 	public MenusHandler(Board myb) {
 		b = myb;
@@ -35,6 +40,7 @@ public class MenusHandler {
 		bIndex = b.bIndex;
 		confirmStore = b.confirmStore;
 		toConf = b.toConf;
+		data = b.data;
 	}
 
 	public MenuPage initControls() {
@@ -144,6 +150,15 @@ public class MenusHandler {
 		g2d.drawString("PAUSED [" + KeyEvent.getKeyText(Board.P) + "]", 128,
 				200);
 
+	}
+
+	public void handleItemPage(Graphics2D g2d) {
+		setUp();
+		Bag b = data.getMyBag();
+		g2d.setColor(Color.WHITE);
+		g2d.setFont(new Font("SERIF",0,48));
+		g2d.drawString("Inventory:", 60, 60);
+		b.draw(g2d, 100, 100, ITEMS_PER_ROW);
 	}
 
 	public void handleIGBar(Graphics2D g2d) {
