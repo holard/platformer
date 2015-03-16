@@ -1,11 +1,15 @@
 package Objects;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+
 import GUI.Board;
 import GUI.Map;
 import Objects.Enemies.Enemy;
+import Objects.Items.Bag;
 import Objects.Items.Gun;
 import Objects.Tiles.Tile;
+import Objects.fieldItems.FieldItem;
 
 public class MainChar extends Element {
 
@@ -20,13 +24,14 @@ public class MainChar extends Element {
 	private boolean[] lrud = { false, false, false, false };
 	private boolean[] lrud2 = { false, false, false, false };
 	private boolean iChange = false; // image change needed
-	private int stick = 0; //0 if not stuck, -1 if stuck on left, 1 if stuck on right
+	private int stick = 0; // 0 if not stuck, -1 if stuck on left, 1 if stuck on
+							// right
 	private int sticktime = 0;
-	private int energy = MAX_ENERGY;
 	private int lastkey = -1;
 	private int doubletimer = 0;
 	private int keycount = 0;
-	private Tile hang; //null if not hanging, otherwise holds tile that is hung on
+	private Tile hang; // null if not hanging, otherwise holds tile that is hung
+						// on
 	private Gun myGun;
 	private boolean firing = false;
 	private int health;
@@ -35,6 +40,7 @@ public class MainChar extends Element {
 	private int checkX;
 	private int checkY;
 	private Tile lastTile = null;
+	private DataCenter data;
 
 	public MainChar(Board myb) {
 		setImage(IMAGE_PATH + "charRight.png");
@@ -61,9 +67,11 @@ public class MainChar extends Element {
 	public void setMap(Map newMap) {
 		myMap = newMap;
 	}
+
 	public int getDirection() {
 		return dir;
 	}
+
 	public void releaseAll() {
 		lrud = new boolean[4];
 		lrud2 = new boolean[4];
@@ -359,12 +367,38 @@ public class MainChar extends Element {
 		stick = 0;
 	}
 
+	private boolean collides(double ox, double oy) {
+		return (ox > x && ox > y && ox < x + width && oy < y + height);
+	}
+
+	public void handleItemPickup() {
+		FieldItem fi = null;
+		Bag myBag = data.getMyBag();
+		if (myBag.isFull()) { 
+		System.out.println("FULL");
+			return;
+		}
+		System.out.println("DURP");
+		for (FieldItem f : myBoard.getFieldItems()) {
+			if (collides(f.x, f.y) || collides(f.x + f.width, f.y)
+					|| collides(f.x, f.y + f.height)
+					|| collides(f.x + f.width, f.y + f.height)) {
+				fi = f;
+			}
+		}
+		if (fi != null) {
+			myBag.put(fi.getItem());
+			myBoard.getFieldItems().remove(fi);
+		}
+	}
+
 	public void handleLastTile() {
 		int cx = (int) (x + width / 2);
 		int cy = (int) (y + height);
 		if (myMap.checkWall(cx, cy)) {
-			if (myMap.getTileAt(cx,cy-SCALE) == null || !myMap.getTileAt(cx,cy-SCALE).isLava() )
-			lastTile = myMap.getWallAt(cx, cy);
+			if (myMap.getTileAt(cx, cy - SCALE) == null
+					|| !myMap.getTileAt(cx, cy - SCALE).isLava())
+				lastTile = myMap.getWallAt(cx, cy);
 		}
 	}
 
@@ -408,7 +442,7 @@ public class MainChar extends Element {
 		handleLastTile();
 		handleLava();
 		handleBTCP();
-
+		handleItemPickup();
 		x += dx;
 		y += dy;
 		handleEnemyCollisions();
@@ -419,7 +453,7 @@ public class MainChar extends Element {
 		if (outOfBounds()) {
 			myBoard.changeMap(0);
 		}
-		
+
 	}
 
 	public void keyPressed(int key) {
@@ -439,7 +473,7 @@ public class MainChar extends Element {
 			lrud2[0] = true;
 			setImage(IMAGE_PATH + "charLeft.png");
 			myGun.setImage(myGun.getLeftImage());
-			
+
 			if ((myMap.checkWall(getX(), getY() + height) || myMap.checkWall(
 					getX() + width - 1, getY() + height))
 					&& lastkey == key
@@ -463,11 +497,10 @@ public class MainChar extends Element {
 			lastkey = key;
 		}
 
-		if (key == Board.DOWN) {			
-			if (myBoard.checkNPC(x + width/2, y + height/2) != null) {
-				myBoard.setNPC(myBoard.checkNPC(x + width/2,y + height/2));
-			}
-			else {
+		if (key == Board.DOWN) {
+			if (myBoard.checkNPC(x + width / 2, y + height / 2) != null) {
+				myBoard.setNPC(myBoard.checkNPC(x + width / 2, y + height / 2));
+			} else {
 				lrud[3] = true;
 				lrud2[3] = true;
 				hang = null;
@@ -551,12 +584,20 @@ public class MainChar extends Element {
 	public void setMaxhealth(int maxhealth) {
 		this.maxhealth = maxhealth;
 	}
-	
+
 	public Tile getHang() {
 		return hang;
 	}
-	
+
 	public int getStick() {
 		return stick;
+	}
+
+	public DataCenter getData() {
+		return data;
+	}
+
+	public void setData(DataCenter data) {
+		this.data = data;
 	}
 }

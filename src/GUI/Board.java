@@ -24,11 +24,13 @@ import GUI.Pages.MenuPage;
 import GUI.Pages.Page;
 import Objects.Enemies.Enemy;
 import Objects.Items.*;
+import Objects.DataCenter;
 import Objects.MainChar;
 import Objects.NPCs.NPC;
 import Objects.NPCs.NPCText;
 import Objects.Projectiles.Projectile;
 import Objects.Tiles.Tile;
+import Objects.fieldItems.FieldItem;
 
 public class Board extends JPanel implements ActionListener {
 	// 0 = l, 1 = r, 2 = u, 3 = d, 4 = f, 5 = g, 6 = p
@@ -39,8 +41,9 @@ public class Board extends JPanel implements ActionListener {
 	public static int GUN_INV_SIZE = 3;
 	public static int IG_PAUSE = 0;
 	public static int IG_EQUIP = 1;
-	public static int IG_QUEST = 2;
-	public static int IG_CONTROLS = 3;
+	public static int IG_ITEMS = 2;
+	public static int IG_QUEST = 3;
+	public static int IG_CONTROLS = 4;
 	public static int UP = KeyEvent.VK_UP;
 	public static int LEFT = KeyEvent.VK_LEFT;
 	public static int RIGHT = KeyEvent.VK_RIGHT;
@@ -61,8 +64,8 @@ public class Board extends JPanel implements ActionListener {
 	private ArrayList<Projectile> projectiles;
 	private ArrayList<Enemy> enemies;
 	private ArrayList<NPC> NPCs;
+	private ArrayList<FieldItem> fieldItems;
 	private ArrayList<Pair<int[], String>> xychart;
-	private ArrayList<Gun> myGuns;
 	private NPC activeNPC;
 	private boolean ingame;
 	private Map M;
@@ -81,7 +84,8 @@ public class Board extends JPanel implements ActionListener {
 	public int toConf = -1;
 	Item confirmStore = null;
 	private MenusHandler mh;
-
+	public DataCenter data;
+	
 	public Board() {
 		addKeyListener(new TAdapter());
 		setFocusable(true);
@@ -109,12 +113,18 @@ public class Board extends JPanel implements ActionListener {
 		globaly = GLOBALY_START;
 		readXYChart();
 		activeNPC = null;
-
+		ArrayList<Gun> myGuns;
+		data = new DataCenter();
+		data.setMain(craft);
+		craft.setData(data);
 		myGuns = new ArrayList<Gun>();
 		mh = new MenusHandler(this);
 		myGuns.add(new BubbleBombLauncher());
 		myGuns.add(new BubbleGun());
 		myGuns.add(new DoubleGun());
+		data.setMyGuns(myGuns);
+		
+		data.setMyBag(new Bag(6));
 	}
 
 	public void initMenus() {
@@ -131,10 +141,12 @@ public class Board extends JPanel implements ActionListener {
 		MenuPage credits = new MenuPage(crButtons, "CREDITS: Poop.");
 		ConfigurePage confPage = new ConfigurePage();
 		ArrayList<Button> pausepage = new ArrayList<Button>();
+		ArrayList<Button> itempage = new ArrayList<Button>();
 		MenuPage controls = mh.initControls();
 		storage = new ArrayList<Item>();
 		gamepages.add(new MenuPage(pausepage, "Pause"));
 		gamepages.add(new EquipPage());
+		gamepages.add(new MenuPage(itempage, "Items"));
 		gamepages.add(new MenuPage(new ArrayList<Button>(), "Quests"));
 		gamepages.add(controls);
 		menupages.add(mainMenu);
@@ -225,6 +237,7 @@ public class Board extends JPanel implements ActionListener {
 		ObjectReader OR = new ObjectReader(file + "/objects.txt", M, this);
 		enemies = OR.makeEnemies();
 		NPCs = OR.makeNPCs();
+		fieldItems = new ArrayList<FieldItem>();
 		projectiles = new ArrayList<Projectile>(40000);
 	}
 	
@@ -343,6 +356,14 @@ public class Board extends JPanel implements ActionListener {
 								- camy, this);
 				}
 
+				for (int i = 0; i < fieldItems.size(); i++) {
+					FieldItem fI = fieldItems.get(i);
+					if (fI.isVisible())
+						g2d.drawImage(fI.getItem().getImage(), fI.getX() - camx, fI.getY()
+								- camy, this);
+				}
+
+				
 				for (int i = 0; i < enemies.size(); i++) {
 					Enemy e = enemies.get(i);
 					if (e.isVisible())
@@ -373,7 +394,11 @@ public class Board extends JPanel implements ActionListener {
 				if (menu == IG_EQUIP) { // equip page
 					mh.handleEquipPage(g2d);
 				}
-
+				
+				if (menu == IG_ITEMS) { // items page
+					mh.handleItemPage(g2d);
+				}
+				
 				if (menu == IG_QUEST) { // quest page
 
 				}
@@ -474,14 +499,16 @@ public class Board extends JPanel implements ActionListener {
 	public void initEquips() {
 		if (menu == 1) {
 			EquipPage ep = (EquipPage) gamepages.get(1);
-			ArrayList<Item> temp = new ArrayList<Item>(myGuns);
+			ArrayList<Item> temp = new ArrayList<Item>(data.getMyGuns());
 			ep.setItems(craft.getMyGun(), temp);
 		}
 	}
 
 	public void handleEquipPage(int key) {
+		ArrayList<Gun> myGuns = data.getMyGuns();
 		if (confirmStore == null) {
 			if (key == F) {
+
 				if (myGuns.size() > 0) {
 					Gun n = myGuns.remove(bIndex);
 					craft.getMyGun().setImage(craft.getMyGun().getRightImage());
@@ -592,7 +619,11 @@ public class Board extends JPanel implements ActionListener {
 	public ArrayList<Enemy> getEnemies() {
 		return enemies;
 	}
-
+	
+	public ArrayList<FieldItem> getFieldItems() {
+		return fieldItems;
+	}
+	
 	public MainChar getMain() {
 		return craft;
 	}
