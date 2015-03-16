@@ -132,7 +132,14 @@ public class NPCText {
 	}
 	
 	public void pickOption() {
-		TextBox newBox = textBoxes.get(optionToBoxId.get(options[opIndex]));
+		int boxId = optionToBoxId.get(options[opIndex]);
+		if (boxId < 0 || boxId >= options.length) {
+			close = true;
+			resetText();
+			myNPC.closeBox();
+			return;
+		}
+		TextBox newBox = textBoxes.get(boxId);
 		text = myNPC.getName() + ": " + newBox.getText();
 		options = newBox.getOptions();
 		opIndex = 0;

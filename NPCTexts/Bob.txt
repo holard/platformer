@@ -10,8 +10,9 @@ Okay 5
 2 To dash, press either LEFT or RIGHT twice quickly in succession 1
 Okay 5
 
-3 To wall jump, press UP and the opposite direction of the wall 1
+3 To wall jump, press UP and the opposite direction of the wall 2
 Okay 5
+Exit 7
 
 4 Fifth 3
 Sixth 5
