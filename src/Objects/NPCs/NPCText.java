@@ -195,7 +195,7 @@ public class NPCText {
 				for (int i = 0; i < options.length; i++) {
 					if (i == opIndex) {
 						g2d.setColor(Color.CYAN);
-						g2d.drawString("- " + options[i], X + H_BUFFER, Y + LINE_HEIGHT + i * LINE_HEIGHT);
+						g2d.drawString("> " + options[i], X + H_BUFFER, Y + LINE_HEIGHT + i * LINE_HEIGHT);
 						g2d.setColor(Color.WHITE);
 					}
 					else

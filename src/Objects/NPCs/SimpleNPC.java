@@ -26,8 +26,12 @@ public class SimpleNPC extends NPC{
 			text.pressConfirm();
 		}
 		else if (key == Board.UP) {
-			if (!text.getTextOrOption())
-				text.changeOption((text.getOpIndex() - 1) % text.getOptions().length);
+			if (!text.getTextOrOption()) {
+				int i = text.getOpIndex() - 1;
+				if (i < 0)
+					i += text.getOptions().length;
+				text.changeOption(i);
+			}
 		}
 		else if (key == Board.DOWN) {
 			if (!text.getTextOrOption())
