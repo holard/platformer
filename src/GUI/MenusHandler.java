@@ -16,6 +16,7 @@ import Objects.DataCenter;
 import Objects.Items.Bag;
 import Objects.Items.Gun;
 import Objects.Items.Item;
+import Quests.Quest;
 
 public class MenusHandler {
 	public static int ITEMS_PER_ROW = 6;
@@ -156,9 +157,32 @@ public class MenusHandler {
 		setUp();
 		Bag b = data.getMyBag();
 		g2d.setColor(Color.WHITE);
-		g2d.setFont(new Font("SERIF",0,48));
+		g2d.setFont(new Font("SERIF", 0, 48));
 		g2d.drawString("Inventory:", 60, 60);
 		b.draw(g2d, 100, 100, ITEMS_PER_ROW);
+	}
+
+	public void handleQuestPage(Graphics2D g2d) {
+		setUp();
+		ArrayList<Quest> quests = data.getQuests();
+		g2d.setColor(Color.WHITE);
+		g2d.setFont(new Font("SERIF", 0, 48));
+		g2d.drawString("Quests:", 60, 60);
+		if (quests.size() == 0) {
+			g2d.setFont(new Font("SERIF", 0, 24));
+			g2d.drawString("You don't have any quests right now.", 100, 100);
+		}
+		for (int i = 0; i < quests.size(); i++) {
+			Quest q = quests.get(i);
+			g2d.setColor(Color.WHITE);
+			g2d.setFont(new Font("SERIF", 0, 24));
+			if (q.isComplete()) {
+				g2d.setColor(Color.GREEN);
+			}
+			g2d.drawString(q.getName(), 100, 100 + i * 40);
+			g2d.setFont(new Font("SERIF", 0, 16));
+			g2d.drawString(q.getTask(), 100, 124 + i * 40);
+		}
 	}
 
 	public void handleIGBar(Graphics2D g2d) {

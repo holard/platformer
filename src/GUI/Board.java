@@ -400,7 +400,7 @@ public class Board extends JPanel implements ActionListener {
 				}
 				
 				if (menu == IG_QUEST) { // quest page
-
+					mh.handleQuestPage(g2d);
 				}
 
 				if (menu == IG_CONTROLS) { // controls page

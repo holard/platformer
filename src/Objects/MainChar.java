@@ -375,10 +375,8 @@ public class MainChar extends Element {
 		FieldItem fi = null;
 		Bag myBag = data.getMyBag();
 		if (myBag.isFull()) { 
-		System.out.println("FULL");
 			return;
 		}
-		System.out.println("DURP");
 		for (FieldItem f : myBoard.getFieldItems()) {
 			if (collides(f.x, f.y) || collides(f.x + f.width, f.y)
 					|| collides(f.x, f.y + f.height)
@@ -387,7 +385,7 @@ public class MainChar extends Element {
 			}
 		}
 		if (fi != null) {
-			myBag.put(fi.getItem());
+			data.addToBag(fi.getItem());
 			myBoard.getFieldItems().remove(fi);
 		}
 	}
@@ -431,10 +429,6 @@ public class MainChar extends Element {
 		Tile[] tiles = new Tile[8];
 		epquery(points, tiles, (int) (x + dx), (int) (y + dy), width, height);
 
-		if (dx != 0) {
-			dir = (int) (dx / (Math.abs(dx)));
-		}
-
 		handleLateralCollision(points, tiles);
 		handleCeilingCollision(points, tiles);
 		handleGravity(points, tiles);
@@ -472,6 +466,7 @@ public class MainChar extends Element {
 			lrud[0] = true;
 			lrud2[0] = true;
 			setImage(IMAGE_PATH + "charLeft.png");
+			dir = -1;
 			myGun.setImage(myGun.getLeftImage());
 
 			if ((myMap.checkWall(getX(), getY() + height) || myMap.checkWall(
@@ -487,6 +482,7 @@ public class MainChar extends Element {
 			lrud[1] = true;
 			lrud2[1] = true;
 			setImage(IMAGE_PATH + "charRight.png");
+			dir = 1;
 			myGun.setImage(myGun.getRightImage());
 			if ((myMap.checkWall(getX(), getY() + height) || myMap.checkWall(
 					getX() + width - 1, getY() + height))

@@ -12,7 +12,7 @@ Okay 5
 
 3 To wall jump, press UP and the opposite direction of the wall 2
 Okay 5
-Exit 7
+Exit 6
 
 4 Fifth 3
 Sixth 5
