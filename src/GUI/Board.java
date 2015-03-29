@@ -382,7 +382,7 @@ public class Board extends JPanel implements ActionListener {
 				if (activeNPC != null) {
 					activeNPC.draw(g2d);
 				}
-
+				data.drawNotification(g2d);
 				handleGunBar(g2d);
 				handleHealthBar(g2d);
 			}

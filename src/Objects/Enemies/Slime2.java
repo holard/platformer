@@ -22,7 +22,7 @@ public class Slime2 extends Enemy {
 		damage = 1;
 		xKnockBack = 10;
 		yKnockBack = 4;
-		
+		name = "Red Slime";
 		myAI = new AggressiveLeapAI(1000,200, SCALE*5);
 	}
 	

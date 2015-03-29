@@ -21,7 +21,7 @@ public class Slime1 extends Enemy {
 		damage = 1;
 		xKnockBack = 10;
 		yKnockBack = 4;
-		
+		name = "Green Slime";
 		myAI = new LeapAI(1000);
 	}
 	

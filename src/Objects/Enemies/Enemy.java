@@ -21,7 +21,12 @@ public abstract class Enemy extends Element {
 	protected double dy;
 	protected AI myAI;
 	protected int mhealth;
-
+	protected String name;
+	
+	public String getName() {
+		return name;
+	}
+	
 	public void initEnemy(double x, double y, Map M, Board B) {
 		this.x = x;
 		this.y = y;
@@ -67,6 +72,7 @@ public abstract class Enemy extends Element {
 
 	public void die() {
 		myBoard.getEnemies().remove(this);
+		myBoard.data.notifyDeath(name);
 	}
 
 	public void move() {

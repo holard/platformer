@@ -179,9 +179,9 @@ public class MenusHandler {
 			if (q.isComplete()) {
 				g2d.setColor(Color.GREEN);
 			}
-			g2d.drawString(q.getName(), 100, 100 + i * 40);
+			g2d.drawString(q.getName(), 100, 100 + i * 60);
 			g2d.setFont(new Font("SERIF", 0, 16));
-			g2d.drawString(q.getTask(), 100, 124 + i * 40);
+			g2d.drawString(q.getTask(), 100, 124 + i * 60);
 		}
 	}
 

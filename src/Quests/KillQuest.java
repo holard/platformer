@@ -3,38 +3,35 @@ package Quests;
 import Objects.DataCenter;
 import Objects.Items.Item;
 
-public class FetchQuest extends BasicQuest {
-	private String item;
+public class KillQuest extends BasicQuest {
+	private String enemy;
 	
-	public FetchQuest(String name, String toFetch, int quantity, DataCenter dc) {
+	
+	public KillQuest(String name, String toKill, int quantity, DataCenter dc) {
 		myName = name;
 		target = quantity;
 		num = 0;
-		item = toFetch;
+		enemy = toKill;
 		data = dc;
 	}
 	
 	public boolean isFetch() {
-		return true;
+		return false;
 	}
 	public boolean isKill() {
-		return false;
+		return true;
 	}
 	public boolean isTalk() {
 		return false;
 	}
-	
 	@Override
 	public String getTask() {
-		return "Collect " + item + "(s): " + num + "/" + target;
+		return "Kill " + enemy + "(s): " + num + "/" + target;
 	}
 	public String getName() {
 		return myName;
 	}
-	public String getItem() {
-		return item;
+	public String getEnemy() {
+		return enemy;
 	}
-	
-
-	
 }

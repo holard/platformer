@@ -7,4 +7,5 @@ public interface Quest {
 	boolean isFetch();
 	boolean isKill();
 	boolean isTalk();
+	void notifyComplete();
 }
